@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 import firebase, { reference } from './firebase.js';
-import { LogInOut } from './LogInOut';
+import { LogInOut } from './components/LogInOut';
 import Transactions from './components/Transactions';
 
 
