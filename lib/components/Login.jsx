@@ -11,7 +11,7 @@ export const Login = ({ authorize, setUser, text, user }) => {
         </div>
         <button
           className='logOutBtn'
-          onClick={() => signOut() }
+          onClick={() => signOut()}
           >Log Out
         </button>
       </div>
