@@ -1,33 +1,44 @@
 import React from 'react';
 import { render } from 'react-dom';
-import firebase, { reference, signIn, signOut } from '../firebase';
+import firebase, { reference } from '../firebase';
 import Frequency from './Frequency';
 
 export default class Transactions extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      transactions: [],
+    };
+  }
+
+  submitTransaction() {
+    const transactionObj = Object.assign({
+      merchant: document.getElementById('merchant').value,
+      amount: document.getElementById('amount').value,
+      date: document.getElementById('date').value,
+    });
+    this.state.transactions.push(transactionObj);
+    firebase.database().ref('transactions').push(transactionObj);
+  }
 
   render() {
-    const { whom, amount, date, handleThiefChange, handleAmountChange, handleDateChange } = this.props
     return (
       <div>
         <header>Trapper Keeper</header>
         <h1>Transactions</h1>
         <input
+          id='merchant'
           type='text'
           placeholder='The MF Thief'
-          value={whom}
-          onChange={handleThiefChange}
         />
         <input
-          type='text'
+          id='amount'
+          type='number'
           placeholder='Amount'
-          value={amount}
-          onChange={handleAmountChange}
         />
         <input
-          type='text'
-          placeholder='Date'
-          value={date}
-          onChange={handleDateChange}
+          id='date'
+          type='date'
         />
         <input
           type='radio'
@@ -35,9 +46,16 @@ export default class Transactions extends React.Component {
           value=''
           onChange=''
         />
+        <button
+          onClick={() => {
+            this.submitTransaction();
+          }}
+          >
+          Submit
+        </button>
         <Frequency
         />
       </div>
-    )
+    );
   }
 }
