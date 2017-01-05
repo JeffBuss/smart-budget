@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
-import firebase, { reference } from './firebase.js';
+import firebase, { reference } from './firebase';
 import { LogInOut } from './components/LogInOut';
 import Transactions from './components/Transactions';
 

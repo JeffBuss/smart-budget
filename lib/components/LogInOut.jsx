@@ -1,5 +1,5 @@
 import React from 'react';
-import { signIn, signOut } from './firebase.js';
+import { signIn, signOut } from '../firebase';
 
 export const LogInOut = ({ user }) => {
   if (user) {
