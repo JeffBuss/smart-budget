@@ -6,6 +6,7 @@ import Frequency from './Frequency';
 export default class Transactions extends React.Component {
 
   render() {
+    const { whom, amount, date, handleThiefChange, handleAmountChange, handleDateChange } = this.props
     return (
       <div>
         <header>Trapper Keeper</header>
@@ -13,20 +14,20 @@ export default class Transactions extends React.Component {
         <input
           type='text'
           placeholder='The MF Thief'
-          value=''
-          onChange=''
+          value={whom}
+          onChange={handleThiefChange}
         />
         <input
           type='text'
           placeholder='Amount'
-          value=''
-          onChange=''
+          value={amount}
+          onChange={handleAmountChange}
         />
         <input
           type='text'
           placeholder='Date'
-          value=''
-          onChange=''
+          value={date}
+          onChange={handleDateChange}
         />
         <input
           type='radio'
