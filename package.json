@@ -29,6 +29,7 @@
     "babel-register": "^6.7.2",
     "chai": "^3.5.0",
     "css-loader": "^0.23.1",
+    "enzyme": "^2.7.0",
     "eslint": "^2.6.0",
     "eslint-config-airbnb": "^9.0.1",
     "eslint-plugin-import": "^1.8.0",
@@ -41,8 +42,10 @@
     "node-libs-browser": "^1.0.0",
     "node-sass": "^3.13.1",
     "react": "^15.1.0",
+    "react-addons-test-utils": "^15.0.0-rc.2",
     "react-dom": "^15.1.0",
     "sass-loader": "^3.2.3",
+    "sinon": "^1.17.7",
     "style-loader": "^0.13.1",
     "webpack": "^1.14.0",
     "webpack-dev-server": "^1.14.1"

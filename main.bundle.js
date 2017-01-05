@@ -29486,8 +29486,14 @@
 	    var _this = _possibleConstructorReturn(this, (Application.__proto__ || Object.getPrototypeOf(Application)).call(this));
 
 	    _this.state = {
-	      user: null
+	      user: null,
+	      whom: '',
+	      amount: '',
+	      date: ''
 	    };
+	    _this.handleThiefChange = _this.handleThiefChange.bind(_this);
+	    _this.handleAmountChange = _this.handleAmountChange.bind(_this);
+	    _this.handleDateChange = _this.handleDateChange.bind(_this);
 	    return _this;
 	  }
 
@@ -29501,6 +29507,24 @@
 	      });
 	    }
 	  }, {
+	    key: 'handleThiefChange',
+	    value: function handleThiefChange(e) {
+	      var whom = e.target.value;
+	      this.setState({ whom: whom });
+	    }
+	  }, {
+	    key: 'handleAmountChange',
+	    value: function handleAmountChange(e) {
+	      var amount = e.target.value;
+	      this.setState({ amount: amount });
+	    }
+	  }, {
+	    key: 'handleDateChange',
+	    value: function handleDateChange(e) {
+	      var date = e.target.value;
+	      this.setState({ date: date });
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      var user = this.state.user;
@@ -29511,7 +29535,11 @@
 	        _react2.default.createElement(_LogInOut.LogInOut, {
 	          user: user
 	        }),
-	        _react2.default.createElement(_Transactions2.default, null)
+	        _react2.default.createElement(_Transactions2.default, {
+	          handleThiefChange: this.handleThiefChange,
+	          handleAmountChange: this.handleAmountChange,
+	          handleDateChange: this.handleDateChange
+	        })
 	      );
 	    }
 	  }]);
@@ -30257,7 +30285,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _firebase = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./firebase.js\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var _firebase = __webpack_require__(476);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -30351,6 +30379,14 @@
 	  _createClass(Transactions, [{
 	    key: 'render',
 	    value: function render() {
+	      var _props = this.props,
+	          whom = _props.whom,
+	          amount = _props.amount,
+	          date = _props.date,
+	          handleThiefChange = _props.handleThiefChange,
+	          handleAmountChange = _props.handleAmountChange,
+	          handleDateChange = _props.handleDateChange;
+
 	      return _react2.default.createElement(
 	        'div',
 	        null,
@@ -30367,20 +30403,20 @@
 	        _react2.default.createElement('input', {
 	          type: 'text',
 	          placeholder: 'The MF Thief',
-	          value: '',
-	          onChange: ''
+	          value: whom,
+	          onChange: handleThiefChange
 	        }),
 	        _react2.default.createElement('input', {
 	          type: 'text',
 	          placeholder: 'Amount',
-	          value: '',
-	          onChange: ''
+	          value: amount,
+	          onChange: handleAmountChange
 	        }),
 	        _react2.default.createElement('input', {
 	          type: 'text',
 	          placeholder: 'Date',
-	          value: '',
-	          onChange: ''
+	          value: date,
+	          onChange: handleDateChange
 	        }),
 	        _react2.default.createElement('input', {
 	          type: 'radio',
