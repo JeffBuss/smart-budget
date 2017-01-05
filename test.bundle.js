@@ -8423,8 +8423,8 @@
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
-		module.hot.accept("!!/Users/elijahwilliams/Documents/Turing/mod2/projects/smart-budget/node_modules/mocha-loader/node_modules/css-loader/index.js!/Users/elijahwilliams/Documents/Turing/mod2/projects/smart-budget/node_modules/mocha/mocha.css", function() {
-			var newContent = require("!!/Users/elijahwilliams/Documents/Turing/mod2/projects/smart-budget/node_modules/mocha-loader/node_modules/css-loader/index.js!/Users/elijahwilliams/Documents/Turing/mod2/projects/smart-budget/node_modules/mocha/mocha.css");
+		module.hot.accept("!!/Users/buss/Turing/smart-budget/node_modules/mocha-loader/node_modules/css-loader/index.js!/Users/buss/Turing/smart-budget/node_modules/mocha/mocha.css", function() {
+			var newContent = require("!!/Users/buss/Turing/smart-budget/node_modules/mocha-loader/node_modules/css-loader/index.js!/Users/buss/Turing/smart-budget/node_modules/mocha/mocha.css");
 			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 			update(newContent);
 		});
