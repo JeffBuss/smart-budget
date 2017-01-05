@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
-import firebase, { reference, signIn, signOut } from '../firebase.js';
+import firebase, { reference, signIn, signOut } from '../firebase';
 import Frequency from './Frequency';
 
 export default class Transactions extends React.Component {
