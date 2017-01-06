@@ -5,7 +5,7 @@ import { pick, map, extend } from 'lodash';
 import { LogInOut } from './components/LogInOut';
 import Transactions from './components/Transactions';
 import SubmitButton from './components/SubmitButton';
-import AddEvent from './components/AddEvent';
+import FlowSchedule from './components/FlowSchedule';
 
 
 export default class Application extends React.Component {
@@ -24,6 +24,7 @@ export default class Application extends React.Component {
     this.handleDateChange = this.handleDateChange.bind(this)
     this.handleTransactionOnclick = this.handleTransactionOnclick.bind(this)
   }
+
   componentDidMount() {
     reference.limitToLast(100).on('value', (snapshot) => {
     const content = snapshot.val() || {}
@@ -35,43 +36,45 @@ export default class Application extends React.Component {
   }
 
   handleThiefChange(e) {
-    let whom = e.target.value
-    this.setState({whom: whom})
+    const whom = e.target.value;
+    this.setState({ whom });
   }
 
   handleAmountChange(e) {
-    let amount = e.target.value
-    this.setState({amount: amount})
+    const amount = e.target.value;
+    this.setState({ amount });
   }
 
   handleDateChange(e) {
-    let date = e.target.value
-    this.setState({date: date})
+    const date = e.target.value;
+    this.setState({ date });
   }
 
   handleTransactionOnclick() {
-    const { whom, amount, date } = this.state
+    const { whom, amount, date } = this.state;
     reference.push({
-      whom: whom,
-      amount: amount,
-      date: date
-    })
+      whom,
+      amount,
+      date,
+    });
     this.setState({
       whom: '',
       amount: '',
       date: '',
-    })
-    debugger
-}
+    });
+  }
 
   render() {
-    const { user } = this.state;
+    const { user, date, amount, whom, content } = this.state;
     return (
       <div>
         <LogInOut
           user={user}
         />
         <Transactions
+          date={date}
+          whom={whom}
+          amount={amount}
           handleThiefChange={this.handleThiefChange}
           handleAmountChange={this.handleAmountChange}
           handleDateChange={this.handleDateChange}
@@ -79,13 +82,9 @@ export default class Application extends React.Component {
         <SubmitButton
           handleTransactionOnclick={this.handleTransactionOnclick}
         />
-        {/* <AddEvent content={}
-        /> */}
-        {/* <ul className='renderedContent'>
-          <li className='renderWhom'>{this.renderWhom()}</li>
-          <li className='renderAmount'>{this.renderAmount()}</li>
-          <li className='renderDate'>{this.renderDate()}</li>
-          </ul> */}
+      <FlowSchedule
+        content={content}
+        />
       </div>
     );
   }
