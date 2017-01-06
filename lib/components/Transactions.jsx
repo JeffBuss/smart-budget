@@ -36,10 +36,8 @@ export default class Transactions extends React.Component {
           type='radio'
           placeholder='Recurring?'
           value=''
-          onChange=''
         />
-        <Frequency
-        />
+        <Frequency />
       </div>
     )
   }
