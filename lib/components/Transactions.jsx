@@ -12,19 +12,22 @@ export default class Transactions extends React.Component {
         <header>Trapper Keeper</header>
         <h1>Transactions</h1>
         <input
+          name='whom'
           type='text'
           placeholder='The MF Thief'
           value={whom}
           onChange={handleThiefChange}
         />
         <input
-          type='text'
+          name='amount'
+          type='number'
           placeholder='Amount'
           value={amount}
           onChange={handleAmountChange}
         />
         <input
-          type='text'
+          name='date'
+          type='date'
           placeholder='Date'
           value={date}
           onChange={handleDateChange}
