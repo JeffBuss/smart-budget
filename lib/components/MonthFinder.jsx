@@ -18,7 +18,7 @@ export default class MonthFinder extends React.Component {
   }
 
   displayMonth() {
-    return this.state.neededMonths.map((day, i) =>{
+    return this.state.neededMonths.map((day, i) => {
       return (
         <li key={i}>
           <h2>{day.whom}</h2>
