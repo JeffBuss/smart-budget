@@ -70,7 +70,6 @@ export default class Application extends React.Component {
       amount: '',
       date: '',
     });
-    debugger;
   }
 
 
