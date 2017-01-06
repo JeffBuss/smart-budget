@@ -1,6 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 import firebase, { reference } from './firebase';
+import moment from 'moment';
 import { pick, map, extend } from 'lodash';
 import { LogInOut } from './components/LogInOut';
 import Transactions from './components/Transactions';
@@ -16,6 +17,7 @@ export default class Application extends React.Component {
       whom: '',
       amount: '',
       date: '',
+      month: '',
       content: [],
     };
 
@@ -47,7 +49,13 @@ export default class Application extends React.Component {
 
   handleDateChange(e) {
     const date = e.target.value;
-    this.setState({ date });
+    this.setState({ date }, () => {
+      this.getMonth();
+    })
+  }
+
+  getMonth() {
+    this.setState({ month: +moment(this.state.date).format('MM') })
   }
 
   handleTransactionOnclick() {
@@ -62,7 +70,10 @@ export default class Application extends React.Component {
       amount: '',
       date: '',
     });
+    debugger;
   }
+
+
 
   render() {
     const { user, date, amount, whom, content } = this.state;
