@@ -13,7 +13,6 @@ export default class MonthFinder extends React.Component {
   filterByMonth(date) {
     const allMatches = this.props.content
       .filter(transaction => +transaction.date.split('-')[1] === +date)
-
     this.setState({neededMonths: allMatches})
   }
 
