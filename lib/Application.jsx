@@ -7,6 +7,7 @@ import { LogInOut } from './components/LogInOut';
 import Transactions from './components/Transactions';
 import SubmitButton from './components/SubmitButton';
 import FlowSchedule from './components/FlowSchedule';
+import MonthFinder from './components/MonthFinder';
 
 
 export default class Application extends React.Component {
@@ -54,16 +55,21 @@ export default class Application extends React.Component {
     })
   }
 
+  submitDisabled() {
+    return !this.state.whom || ! this.state.amount || !this.state.date
+  }
+
   getMonth() {
-    this.setState({ month: +moment(this.state.date).format('MM') })
+    this.setState({ month: +this.state.date.split('-')[1] })
   }
 
   handleTransactionOnclick() {
-    const { whom, amount, date } = this.state;
+    const { whom, amount, date, month } = this.state;
     reference.push({
       whom,
       amount,
       date,
+      month,
     });
     this.setState({
       whom: '',
@@ -71,8 +77,6 @@ export default class Application extends React.Component {
       date: '',
     });
   }
-
-
 
   render() {
     const { user, date, amount, whom, content } = this.state;
@@ -91,9 +95,13 @@ export default class Application extends React.Component {
         />
         <SubmitButton
           handleTransactionOnclick={this.handleTransactionOnclick}
+          submitDisabled={this.submitDisabled()}
         />
-      <FlowSchedule
-        content={content}
+        <FlowSchedule
+          content={content}
+        />
+        <MonthFinder
+          content={content}
         />
       </div>
     );

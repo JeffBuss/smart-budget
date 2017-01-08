@@ -23,7 +23,7 @@ export default class FlowSchedule extends React.Component {
           return (
             <article key={i}>
               <p className='flow-schedule-name'>{content.whom}</p>
-              <p className='flow-schedule-amount'>{content.amount}</p>
+              <p className='flow-schedule-amount'>${content.amount}</p>
               <p className='flow-schedule-date'>{content.date}</p>
             </article>
           )
