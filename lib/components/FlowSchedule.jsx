@@ -4,7 +4,16 @@ import firebase, { reference } from '../firebase';
 
 export default class FlowSchedule extends React.Component {
 
+  monthFilter(content, 1)
 
+  monthFilter(content, selectedMonth) {
+    content.map((transaction, i) => {
+      if (transaction.month === selectedMonth) {
+        console.log('yo');
+        // selectedMonth.push(transaction);
+      }
+    });
+  }
 
   render() {
     const { content } = this.props
