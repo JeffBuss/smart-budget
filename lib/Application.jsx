@@ -55,6 +55,10 @@ export default class Application extends React.Component {
     })
   }
 
+  submitDisabled() {
+    return !this.state.whom || ! this.state.amount || !this.state.date
+  }
+
   getMonth() {
     this.setState({ month: +this.state.date.split('-')[1] })
   }
@@ -92,6 +96,7 @@ export default class Application extends React.Component {
         />
         <SubmitButton
           handleTransactionOnclick={this.handleTransactionOnclick}
+          submitDisabled={this.submitDisabled()}
         />
         <FlowSchedule
           content={content}
