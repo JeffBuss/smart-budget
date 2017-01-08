@@ -26,6 +26,7 @@ export default class Application extends React.Component {
     this.handleAmountChange = this.handleAmountChange.bind(this)
     this.handleDateChange = this.handleDateChange.bind(this)
     this.handleTransactionOnclick = this.handleTransactionOnclick.bind(this)
+    this.handleDelete = this.handleDelete.bind(this)
   }
 
   componentDidMount() {
@@ -57,6 +58,13 @@ export default class Application extends React.Component {
 
   submitDisabled() {
     return !this.state.whom || ! this.state.amount || !this.state.date
+  }
+
+  handleDelete(transactionId) {
+    let removedItem = this.state.content.filter((transaction) => {
+      return transaction.key !== transactionId;
+    });
+    this.setState({ content: removedItem });
   }
 
   getMonth() {
@@ -99,6 +107,7 @@ export default class Application extends React.Component {
         />
         <FlowSchedule
           content={content}
+          handleDelete={this.handleDelete}
         />
         <MonthFinder
           content={content}

@@ -14,24 +14,28 @@ export default class Frequency extends React.Component {
           placeholder='Daily'
           value=''
         />
+        <p>Daily</p>
         <input
           type='radio'
           name='frequency radio'
           placeholder='Weekly'
           value=''
         />
+        <p>Weekly</p>
         <input
           type='radio'
           name='frequency radio'
           placeholder='Monthly'
           value=''
         />
+        <p>Monthly</p>
         <input
           type='radio'
           name='frequency radio'
           placeholder='Annually'
           value=''
         />
+        <p>Annually</p>
       </div>
     )
   }
