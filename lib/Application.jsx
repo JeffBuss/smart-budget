@@ -10,7 +10,6 @@ import MonthFinder from './components/MonthFinder';
 import SubmitFunds from './components/SubmitFunds';
 import Quote from './components/Quotes.jsx';
 
-
 export default class Application extends React.Component {
   constructor() {
     super();
@@ -30,7 +29,6 @@ export default class Application extends React.Component {
     this.handleAmountChange = this.handleAmountChange.bind(this);
     this.handleDateChange = this.handleDateChange.bind(this);
     this.handleTransactionOnclick = this.handleTransactionOnclick.bind(this);
-    // this.handleDelete = this.handleDelete.bind(this)
     this.handleFunds = this.handleFunds.bind(this);
     this.submitFunds = this.submitFunds.bind(this);
     this.handleRecurring = this.handleRecurring.bind(this);
@@ -185,7 +183,6 @@ export default class Application extends React.Component {
         <MonthFinder
           content={content}
           deleteContent={this.deleteContent.bind(this)}
-          // handleDelete={this.handleDelete}
         />
       </div>
     );
