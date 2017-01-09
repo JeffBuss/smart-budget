@@ -23,10 +23,19 @@ export default class MonthFinder extends React.Component {
           <h2>{day.whom}</h2>
           <h2>${day.amount}</h2>
           <h2>{day.date}</h2>
-          {/* <h2>{this.state.neededMonths.map(day => day.amount).reduce((a, b) => a +b)}</h2> */}
+          <button
+            onClick={ () => this.handleDelete(day.key) }
+          >Delete</button>
         </li>
       )
     })
+  }
+  handleDelete(transactionId) {
+    let removedItem = this.state.neededMonths.filter((transaction) => {
+      return transaction.key !== transactionId;
+    });
+    this.setState({ neededMonths: removedItem });
+    console.log('hi');
   }
 
   displayMonthlyAmount() {

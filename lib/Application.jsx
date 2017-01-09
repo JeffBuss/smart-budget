@@ -26,6 +26,7 @@ export default class Application extends React.Component {
     this.handleAmountChange = this.handleAmountChange.bind(this)
     this.handleDateChange = this.handleDateChange.bind(this)
     this.handleTransactionOnclick = this.handleTransactionOnclick.bind(this)
+    // this.handleDelete = this.handleDelete.bind(this)
   }
 
   componentDidMount() {
@@ -102,6 +103,7 @@ export default class Application extends React.Component {
         />
         <MonthFinder
           content={content}
+          // handleDelete={this.handleDelete}
         />
       </div>
     );
