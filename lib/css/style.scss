@@ -12,8 +12,17 @@ button {
   @include buttonStyles;
 }
 
+ul {
+  list-style-type: none;
+  font-size: 22px;
+}
+
+.funds {
+  font-family: $serifFontStyle
+}
 .title {
   font-size: 5em;
+  text-align: center;
 }
 
 .transaction-field {
