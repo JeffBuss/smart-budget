@@ -47,12 +47,6 @@ export default class Application extends React.Component {
           bankAccount: map(content, (val, key) => extend(val, { key })),
         });
       })
-    // firebase.database().ref('funds').on('value', (snapshot) => {
-    //   const fundsObj = snapshot.val() || {};
-    //   const objKey = Object.keys(fundsObj);
-    //   const currentFunds = fundsObj[objKey].funds;
-    //   this.setState({ funds: currentFunds });
-    // })
     firebase.auth().onAuthStateChanged(user => this.setState({ user }));
   }
 
@@ -83,7 +77,7 @@ export default class Application extends React.Component {
     this.setState({ funds: funds}, () => {
       const { funds } = this.state
       this.setState({funds: '', currentFunds: funds}, () => {
-     console.log(this.reduceAssets())
+     return this.reduceAssets()
       })
     })
   }
@@ -91,10 +85,6 @@ export default class Application extends React.Component {
   reduceAssets() {
     let assets = this.state.bankAccount.map(deposits => +deposits.funds)
     return (assets.reduce((a, b) => a + b, 0))
-  }
-
-  renderFunds() {
-    return this.state.currentFunds
   }
 
   submitFundsDisabled() {
@@ -138,7 +128,7 @@ export default class Application extends React.Component {
           submitFundsDisabled={this.submitFundsDisabled()}
         />
           <ul>
-            <li className='funds'>${this.renderFunds()}</li>
+            <li className='funds'>${this.reduceAssets()}</li>
           </ul>
         <Transactions
           date={date}
