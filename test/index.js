@@ -109,6 +109,21 @@ describe('MonthFinder', () => {
   it('should render as a <div>', () => {
     assert.equal(wrapper.type(), 'div');
   });
+
+  it('should have props', () => {
+    const wrapper = mount(<MonthFinder
+      neededMonths = 'january'
+    />);
+    expect(wrapper.prop('neededMonths')).to.equal('january');
+  });
+
+  it('should render 12 month filter buttons', () => {
+    expect(wrapper.find('button')).to.be.length(12);
+  });
+
+  it('should render a Total Monthyl amount h2', () => {
+    expect(wrapper.find('h2')).to.be.length(1);
+  });
 });
 
 describe('SubmitButton', () => {
