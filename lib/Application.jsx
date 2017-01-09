@@ -98,9 +98,9 @@ export default class Application extends React.Component {
           handleTransactionOnclick={this.handleTransactionOnclick}
           submitDisabled={this.submitDisabled()}
         />
-        <FlowSchedule
+        {/* <FlowSchedule
           content={content}
-        />
+        /> */}
         <MonthFinder
           content={content}
           // handleDelete={this.handleDelete}

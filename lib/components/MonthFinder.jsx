@@ -62,8 +62,8 @@ export default class MonthFinder extends React.Component {
         <button onClick={this.handleMonthFilter} id={10}>October</button>
         <button onClick={this.handleMonthFilter} id={11}>November</button>
         <button onClick={this.handleMonthFilter} id={12}>December</button>
+        <h2>Total Monthly Amount: $ {this.displayMonthlyAmount()}</h2>
         <ul>{this.displayMonth()}</ul>
-        <h2>$ {this.displayMonthlyAmount()}</h2>
       </div>
     )
   }
