@@ -8210,7 +8210,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	__webpack_require__(601);
+	__webpack_require__(603);
 
 	(0, _reactDom.render)(_react2.default.createElement(_Application2.default, null), document.getElementById('application'));
 
@@ -8673,17 +8673,6 @@
 	  }
 	};
 
-	var fiveArgumentPooler = function (a1, a2, a3, a4, a5) {
-	  var Klass = this;
-	  if (Klass.instancePool.length) {
-	    var instance = Klass.instancePool.pop();
-	    Klass.call(instance, a1, a2, a3, a4, a5);
-	    return instance;
-	  } else {
-	    return new Klass(a1, a2, a3, a4, a5);
-	  }
-	};
-
 	var standardReleaser = function (instance) {
 	  var Klass = this;
 	  !(instance instanceof Klass) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Trying to release an instance into a pool of a different type.') : _prodInvariant('25') : void 0;
@@ -8723,8 +8712,7 @@
 	  oneArgumentPooler: oneArgumentPooler,
 	  twoArgumentPooler: twoArgumentPooler,
 	  threeArgumentPooler: threeArgumentPooler,
-	  fourArgumentPooler: fourArgumentPooler,
-	  fiveArgumentPooler: fiveArgumentPooler
+	  fourArgumentPooler: fourArgumentPooler
 	};
 
 	module.exports = PooledClass;
@@ -11064,7 +11052,14 @@
 	    // We warn in this case but don't throw. We expect the element creation to
 	    // succeed and there will likely be errors in render.
 	    if (!validType) {
-	      process.env.NODE_ENV !== 'production' ? warning(false, 'React.createElement: type should not be null, undefined, boolean, or ' + 'number. It should be a string (for DOM elements) or a ReactClass ' + '(for composite components).%s', getDeclarationErrorAddendum()) : void 0;
+	      if (typeof type !== 'function' && typeof type !== 'string') {
+	        var info = '';
+	        if (type === undefined || typeof type === 'object' && type !== null && Object.keys(type).length === 0) {
+	          info += ' You likely forgot to export your component from the file ' + 'it\'s defined in.';
+	        }
+	        info += getDeclarationErrorAddendum();
+	        process.env.NODE_ENV !== 'production' ? warning(false, 'React.createElement: type is invalid -- expected a string (for ' + 'built-in components) or a class/function (for composite ' + 'components) but got: %s.%s', type == null ? type : typeof type, info) : void 0;
+	      }
 	    }
 
 	    var element = ReactElement.createElement.apply(this, arguments);
@@ -12035,7 +12030,7 @@
 
 	'use strict';
 
-	module.exports = '15.4.1';
+	module.exports = '15.4.2';
 
 /***/ },
 /* 328 */
@@ -12234,6 +12229,13 @@
 	var internalInstanceKey = '__reactInternalInstance$' + Math.random().toString(36).slice(2);
 
 	/**
+	 * Check if a given node should be cached.
+	 */
+	function shouldPrecacheNode(node, nodeID) {
+	  return node.nodeType === 1 && node.getAttribute(ATTR_NAME) === String(nodeID) || node.nodeType === 8 && node.nodeValue === ' react-text: ' + nodeID + ' ' || node.nodeType === 8 && node.nodeValue === ' react-empty: ' + nodeID + ' ';
+	}
+
+	/**
 	 * Drill down (through composites and empty components) until we get a host or
 	 * host text component.
 	 *
@@ -12298,7 +12300,7 @@
 	    }
 	    // We assume the child nodes are in the same order as the child instances.
 	    for (; childNode !== null; childNode = childNode.nextSibling) {
-	      if (childNode.nodeType === 1 && childNode.getAttribute(ATTR_NAME) === String(childID) || childNode.nodeType === 8 && childNode.nodeValue === ' react-text: ' + childID + ' ' || childNode.nodeType === 8 && childNode.nodeValue === ' react-empty: ' + childID + ' ') {
+	      if (shouldPrecacheNode(childNode, childID)) {
 	        precacheNode(childInst, childNode);
 	        continue outer;
 	      }
@@ -14539,17 +14541,6 @@
 	  }
 	};
 
-	var fiveArgumentPooler = function (a1, a2, a3, a4, a5) {
-	  var Klass = this;
-	  if (Klass.instancePool.length) {
-	    var instance = Klass.instancePool.pop();
-	    Klass.call(instance, a1, a2, a3, a4, a5);
-	    return instance;
-	  } else {
-	    return new Klass(a1, a2, a3, a4, a5);
-	  }
-	};
-
 	var standardReleaser = function (instance) {
 	  var Klass = this;
 	  !(instance instanceof Klass) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Trying to release an instance into a pool of a different type.') : _prodInvariant('25') : void 0;
@@ -14589,8 +14580,7 @@
 	  oneArgumentPooler: oneArgumentPooler,
 	  twoArgumentPooler: twoArgumentPooler,
 	  threeArgumentPooler: threeArgumentPooler,
-	  fourArgumentPooler: fourArgumentPooler,
-	  fiveArgumentPooler: fiveArgumentPooler
+	  fourArgumentPooler: fourArgumentPooler
 	};
 
 	module.exports = PooledClass;
@@ -19408,12 +19398,18 @@
 	    } else {
 	      var contentToUse = CONTENT_TYPES[typeof props.children] ? props.children : null;
 	      var childrenToUse = contentToUse != null ? null : props.children;
+	      // TODO: Validate that text is allowed as a child of this node
 	      if (contentToUse != null) {
-	        // TODO: Validate that text is allowed as a child of this node
-	        if (process.env.NODE_ENV !== 'production') {
-	          setAndValidateContentChildDev.call(this, contentToUse);
+	        // Avoid setting textContent when the text is empty. In IE11 setting
+	        // textContent on a text area will cause the placeholder to not
+	        // show within the textarea until it has been focused and blurred again.
+	        // https://github.com/facebook/react/issues/6731#issuecomment-254874553
+	        if (contentToUse !== '') {
+	          if (process.env.NODE_ENV !== 'production') {
+	            setAndValidateContentChildDev.call(this, contentToUse);
+	          }
+	          DOMLazyTree.queueText(lazyTree, contentToUse);
 	        }
-	        DOMLazyTree.queueText(lazyTree, contentToUse);
 	      } else if (childrenToUse != null) {
 	        var mountImages = this.mountChildren(childrenToUse, transaction, context);
 	        for (var i = 0; i < mountImages.length; i++) {
@@ -21333,7 +21329,17 @@
 	      }
 	    } else {
 	      if (props.value == null && props.defaultValue != null) {
-	        node.defaultValue = '' + props.defaultValue;
+	        // In Chrome, assigning defaultValue to certain input types triggers input validation.
+	        // For number inputs, the display value loses trailing decimal points. For email inputs,
+	        // Chrome raises "The specified value <x> is not a valid email address".
+	        //
+	        // Here we check to see if the defaultValue has actually changed, avoiding these problems
+	        // when the user is inputting text
+	        //
+	        // https://github.com/facebook/react/issues/7253
+	        if (node.defaultValue !== '' + props.defaultValue) {
+	          node.defaultValue = '' + props.defaultValue;
+	        }
 	      }
 	      if (props.checked == null && props.defaultChecked != null) {
 	        node.defaultChecked = !!props.defaultChecked;
@@ -22080,9 +22086,15 @@
 	    // This is in postMount because we need access to the DOM node, which is not
 	    // available until after the component has mounted.
 	    var node = ReactDOMComponentTree.getNodeFromInstance(inst);
+	    var textContent = node.textContent;
 
-	    // Warning: node.value may be the empty string at this point (IE11) if placeholder is set.
-	    node.value = node.textContent; // Detach value from defaultValue
+	    // Only set node.value if textContent is equal to the expected
+	    // initial value. In IE10/IE11 there is a bug where the placeholder attribute
+	    // will populate textContent as well.
+	    // https://developer.microsoft.com/microsoft-edge/platform/issues/101525/
+	    if (textContent === inst._wrapperState.initialValue) {
+	      node.value = textContent;
+	    }
 	  }
 	};
 
@@ -22884,7 +22896,17 @@
 	    instance = ReactEmptyComponent.create(instantiateReactComponent);
 	  } else if (typeof node === 'object') {
 	    var element = node;
-	    !(element && (typeof element.type === 'function' || typeof element.type === 'string')) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: %s.%s', element.type == null ? element.type : typeof element.type, getDeclarationErrorAddendum(element._owner)) : _prodInvariant('130', element.type == null ? element.type : typeof element.type, getDeclarationErrorAddendum(element._owner)) : void 0;
+	    var type = element.type;
+	    if (typeof type !== 'function' && typeof type !== 'string') {
+	      var info = '';
+	      if (process.env.NODE_ENV !== 'production') {
+	        if (type === undefined || typeof type === 'object' && type !== null && Object.keys(type).length === 0) {
+	          info += ' You likely forgot to export your component from the file ' + 'it\'s defined in.';
+	        }
+	      }
+	      info += getDeclarationErrorAddendum(element._owner);
+	       true ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: %s.%s', type == null ? type : typeof type, info) : _prodInvariant('130', type == null ? type : typeof type, info) : void 0;
+	    }
 
 	    // Special case string values
 	    if (typeof element.type === 'string') {
@@ -23174,7 +23196,7 @@
 	      // Since plain JS classes are defined without any special initialization
 	      // logic, we can not catch common errors early. Therefore, we have to
 	      // catch them here, at initialization time, instead.
-	      process.env.NODE_ENV !== 'production' ? warning(!inst.getInitialState || inst.getInitialState.isReactClassApproved, 'getInitialState was defined on %s, a plain JavaScript class. ' + 'This is only supported for classes created using React.createClass. ' + 'Did you mean to define a state property instead?', this.getName() || 'a component') : void 0;
+	      process.env.NODE_ENV !== 'production' ? warning(!inst.getInitialState || inst.getInitialState.isReactClassApproved || inst.state, 'getInitialState was defined on %s, a plain JavaScript class. ' + 'This is only supported for classes created using React.createClass. ' + 'Did you mean to define a state property instead?', this.getName() || 'a component') : void 0;
 	      process.env.NODE_ENV !== 'production' ? warning(!inst.getDefaultProps || inst.getDefaultProps.isReactClassApproved, 'getDefaultProps was defined on %s, a plain JavaScript class. ' + 'This is only supported for classes created using React.createClass. ' + 'Use a static property to define defaultProps instead.', this.getName() || 'a component') : void 0;
 	      process.env.NODE_ENV !== 'production' ? warning(!inst.propTypes, 'propTypes was defined as an instance property on %s. Use a static ' + 'property to define propTypes instead.', this.getName() || 'a component') : void 0;
 	      process.env.NODE_ENV !== 'production' ? warning(!inst.contextTypes, 'contextTypes was defined as an instance property on %s. Use a ' + 'static property to define contextTypes instead.', this.getName() || 'a component') : void 0;
@@ -24178,14 +24200,11 @@
 
 	'use strict';
 
-	var _prodInvariant = __webpack_require__(332),
-	    _assign = __webpack_require__(301);
+	var _prodInvariant = __webpack_require__(332);
 
 	var invariant = __webpack_require__(305);
 
 	var genericComponentClass = null;
-	// This registry keeps track of wrapper classes around host tags.
-	var tagToComponentClass = {};
 	var textComponentClass = null;
 
 	var ReactHostComponentInjection = {
@@ -24198,11 +24217,6 @@
 	  // rendered as props.
 	  injectTextComponentClass: function (componentClass) {
 	    textComponentClass = componentClass;
-	  },
-	  // This accepts a keyed object with classes as values. Each key represents a
-	  // tag. That particular tag will use this class instead of the generic one.
-	  injectComponentClasses: function (componentClasses) {
-	    _assign(tagToComponentClass, componentClasses);
 	  }
 	};
 
@@ -29057,7 +29071,7 @@
 
 	'use strict';
 
-	module.exports = '15.4.1';
+	module.exports = '15.4.2';
 
 /***/ },
 /* 469 */
@@ -29471,21 +29485,29 @@
 
 	var _LogInOut = __webpack_require__(595);
 
-	var _Transactions = __webpack_require__(596);
+	var _Transactions = __webpack_require__(597);
 
 	var _Transactions2 = _interopRequireDefault(_Transactions);
 
-	var _SubmitButton = __webpack_require__(598);
+	var _SubmitButton = __webpack_require__(599);
 
 	var _SubmitButton2 = _interopRequireDefault(_SubmitButton);
 
-	var _FlowSchedule = __webpack_require__(599);
+	var _FlowSchedule = __webpack_require__(600);
 
 	var _FlowSchedule2 = _interopRequireDefault(_FlowSchedule);
 
-	var _MonthFinder = __webpack_require__(600);
+	var _MonthFinder = __webpack_require__(601);
 
 	var _MonthFinder2 = _interopRequireDefault(_MonthFinder);
+
+	var _SubmitFunds = __webpack_require__(602);
+
+	var _SubmitFunds2 = _interopRequireDefault(_SubmitFunds);
+
+	var _Quotes = __webpack_require__(596);
+
+	var _Quotes2 = _interopRequireDefault(_Quotes);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -29509,13 +29531,20 @@
 	      amount: '',
 	      date: '',
 	      month: '',
-	      content: []
+	      content: [],
+	      funds: '',
+	      bankAccount: [],
+	      recurring: false
 	    };
 
 	    _this.handleThiefChange = _this.handleThiefChange.bind(_this);
 	    _this.handleAmountChange = _this.handleAmountChange.bind(_this);
 	    _this.handleDateChange = _this.handleDateChange.bind(_this);
 	    _this.handleTransactionOnclick = _this.handleTransactionOnclick.bind(_this);
+	    // this.handleDelete = this.handleDelete.bind(this)
+	    _this.handleFunds = _this.handleFunds.bind(_this);
+	    _this.submitFunds = _this.submitFunds.bind(_this);
+	    _this.handleRecurring = _this.handleRecurring.bind(_this);
 	    return _this;
 	  }
 
@@ -29524,10 +29553,18 @@
 	    value: function componentDidMount() {
 	      var _this2 = this;
 
-	      _firebase.reference.limitToLast(100).on('value', function (snapshot) {
+	      _firebase2.default.database().ref('content').limitToLast(100).on('value', function (snapshot) {
 	        var content = snapshot.val() || {};
 	        _this2.setState({
 	          content: (0, _lodash.map)(content, function (val, key) {
+	            return (0, _lodash.extend)(val, { key: key });
+	          })
+	        });
+	      });
+	      _firebase2.default.database().ref('funds').limitToLast(100).on('value', function (snapshot) {
+	        var content = snapshot.val() || {};
+	        _this2.setState({
+	          bankAccount: (0, _lodash.map)(content, function (val, key) {
 	            return (0, _lodash.extend)(val, { key: key });
 	          })
 	        });
@@ -29559,6 +29596,47 @@
 	      });
 	    }
 	  }, {
+	    key: 'handleFunds',
+	    value: function handleFunds(e) {
+	      this.setState({ funds: e.target.value });
+	    }
+	  }, {
+	    key: 'handleRecurring',
+	    value: function handleRecurring() {
+	      this.setState({ recurring: !this.state.recurring });
+	    }
+	  }, {
+	    key: 'submitFunds',
+	    value: function submitFunds() {
+	      var _this4 = this;
+
+	      var funds = this.state.funds;
+
+	      _firebase2.default.database().ref('funds').push({ funds: funds });
+	      this.setState({ funds: funds }, function () {
+	        var funds = _this4.state.funds;
+
+	        _this4.setState({ funds: '', currentFunds: funds }, function () {
+	          return _this4.reduceAssets();
+	        });
+	      });
+	    }
+	  }, {
+	    key: 'reduceAssets',
+	    value: function reduceAssets() {
+	      var assets = this.state.bankAccount.map(function (deposits) {
+	        return +deposits.funds;
+	      });
+	      return assets.reduce(function (a, b) {
+	        return a + b;
+	      }, 0);
+	    }
+	  }, {
+	    key: 'submitFundsDisabled',
+	    value: function submitFundsDisabled() {
+	      return !this.state.funds;
+	    }
+	  }, {
 	    key: 'submitDisabled',
 	    value: function submitDisabled() {
 	      return !this.state.whom || !this.state.amount || !this.state.date;
@@ -29577,7 +29655,7 @@
 	          date = _state.date,
 	          month = _state.month;
 
-	      _firebase.reference.push({
+	      reference.push({
 	        whom: whom,
 	        amount: amount,
 	        date: date,
@@ -29597,7 +29675,9 @@
 	          date = _state2.date,
 	          amount = _state2.amount,
 	          whom = _state2.whom,
-	          content = _state2.content;
+	          content = _state2.content,
+	          funds = _state2.funds,
+	          recurring = _state2.recurring;
 
 	      return _react2.default.createElement(
 	        'div',
@@ -29605,23 +29685,39 @@
 	        _react2.default.createElement(_LogInOut.LogInOut, {
 	          user: user
 	        }),
+	        _react2.default.createElement(_SubmitFunds2.default, {
+	          funds: funds,
+	          handleFunds: this.handleFunds,
+	          submitFunds: this.submitFunds,
+	          submitFundsDisabled: this.submitFundsDisabled()
+	        }),
+	        _react2.default.createElement(
+	          'ul',
+	          null,
+	          _react2.default.createElement(
+	            'li',
+	            { className: 'funds' },
+	            'All My Scratch: $',
+	            this.reduceAssets()
+	          )
+	        ),
 	        _react2.default.createElement(_Transactions2.default, {
 	          date: date,
 	          whom: whom,
 	          amount: amount,
+	          recurring: recurring,
 	          handleThiefChange: this.handleThiefChange,
 	          handleAmountChange: this.handleAmountChange,
-	          handleDateChange: this.handleDateChange
+	          handleDateChange: this.handleDateChange,
+	          handleRecurring: this.handleRecurring
 	        }),
 	        _react2.default.createElement(_SubmitButton2.default, {
 	          handleTransactionOnclick: this.handleTransactionOnclick,
 	          submitDisabled: this.submitDisabled()
 	        }),
-	        _react2.default.createElement(_FlowSchedule2.default, {
-	          content: content
-	        }),
 	        _react2.default.createElement(_MonthFinder2.default, {
 	          content: content
+	          // handleDelete={this.handleDelete}
 	        })
 	      );
 	    }
@@ -62361,6 +62457,10 @@
 
 	var _firebase = __webpack_require__(476);
 
+	var _Quotes = __webpack_require__(596);
+
+	var _Quotes2 = _interopRequireDefault(_Quotes);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var LogInOut = exports.LogInOut = function LogInOut(_ref) {
@@ -62369,7 +62469,7 @@
 	  if (user) {
 	    return _react2.default.createElement(
 	      'div',
-	      null,
+	      { className: 'logged-in' },
 	      _react2.default.createElement(
 	        'p',
 	        {
@@ -62395,6 +62495,11 @@
 	      'div',
 	      null,
 	      _react2.default.createElement(
+	        'p',
+	        null,
+	        (0, _Quotes2.default)()
+	      ),
+	      _react2.default.createElement(
 	        'button',
 	        {
 	          className: 'sign-in',
@@ -62409,6 +62514,23 @@
 
 /***/ },
 /* 596 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var Quote = function Quote() {
+	  var quotesArray = ['"Floss a little; invest up in a mutual fund." (Busta Rhymes, “Dangerous”)', '"Men lie, women lie, numbers don’t.” (Jay Z, "Reminder")', '"Get your money right, be an international player.” (Dr. Dre, “Get Your Money Right")', '“Control what I hold and of course be the boss of myself, no-one else will bring my wealth.” (Big Daddy Kane, “A Job Ain’t Nothing But Work”)', '“Let’s toast to paid mortgages, lasting marriages.” (Talib Kweli, “Art Imitates Life.")', '“Never loan somebody what you need right back.” (Drake, “All Me”)', '“Invest in your future, don’t dilute your finances, 401k, make sure it’s low risk, then get some real estate, 4.25% thirty-year mortgage.” (Kendrick Lamar, "YOLO")', '"We dont lease we buy the whole car. (Jay Z, Can I Live)"', '"Diversify your millions, you can live off the interest / Make every revenue stream flood, see where it took me." (Xzibit, "Everything")', '"Id be lying if I said I didnt want millions / More than money saved, I wanna save children." (Common, "The 6th Sense")'];
+	  var randomQuote = quotesArray[Math.floor(Math.random() * quotesArray.length)];
+	  return randomQuote;
+	};
+
+	exports.default = Quote;
+
+/***/ },
+/* 597 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -62429,7 +62551,7 @@
 
 	var _firebase2 = _interopRequireDefault(_firebase);
 
-	var _Frequency = __webpack_require__(597);
+	var _Frequency = __webpack_require__(598);
 
 	var _Frequency2 = _interopRequireDefault(_Frequency);
 
@@ -62457,50 +62579,69 @@
 	          whom = _props.whom,
 	          amount = _props.amount,
 	          date = _props.date,
+	          recurring = _props.recurring,
 	          handleThiefChange = _props.handleThiefChange,
 	          handleAmountChange = _props.handleAmountChange,
-	          handleDateChange = _props.handleDateChange;
+	          handleDateChange = _props.handleDateChange,
+	          handleRecurring = _props.handleRecurring;
 
 	      return _react2.default.createElement(
 	        'div',
 	        null,
 	        _react2.default.createElement(
-	          'header',
-	          null,
-	          'Trapper Keeper'
-	        ),
-	        _react2.default.createElement(
-	          'h1',
-	          null,
-	          'Transactions'
-	        ),
-	        _react2.default.createElement('input', {
-	          name: 'whom',
-	          type: 'text',
-	          placeholder: 'The MF Thief',
-	          value: whom,
-	          onChange: handleThiefChange
-	        }),
-	        _react2.default.createElement('input', {
-	          name: 'amount',
-	          type: 'number',
-	          placeholder: 'Amount',
-	          value: amount,
-	          onChange: handleAmountChange
-	        }),
-	        _react2.default.createElement('input', {
-	          name: 'date',
-	          type: 'date',
-	          placeholder: 'Date',
-	          value: date,
-	          onChange: handleDateChange
-	        }),
-	        _react2.default.createElement('input', {
-	          type: 'radio',
-	          placeholder: 'Recurring?',
-	          value: ''
-	        }),
-	        _react2.default.createElement(_Frequency2.default, null)
+	          'div',
+	          { className: 'input-field' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'transaction-field' },
+	            _react2.default.createElement(
+	              'h1',
+	              { className: 'transaction-title' },
+	              'Bitches I Gotta Pay:'
+	            ),
+	            _react2.default.createElement('input', {
+	              className: 'whom-input transactions',
+	              name: 'whom',
+	              type: 'text',
+	              placeholder: 'The MF Thief',
+	              value: whom,
+	              onChange: handleThiefChange
+	            }),
+	            _react2.default.createElement('input', {
+	              className: 'amount-input transactions',
+	              name: 'amount',
+	              type: 'number',
+	              placeholder: 'Amount',
+	              value: amount,
+	              onChange: handleAmountChange
+	            }),
+	            _react2.default.createElement('input', {
+	              className: 'date-input transactions',
+	              name: 'date',
+	              type: 'date',
+	              placeholder: 'Date',
+	              value: date,
+	              onChange: handleDateChange
+	            }),
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'recurring-radio' },
+	              _react2.default.createElement(
+	                'p',
+	                null,
+	                'Pay The Bitches More Than Once?'
+	              ),
+	              _react2.default.createElement('input', {
+	                className: 'recurring-input',
+	                type: 'checkbox',
+	                placeholder: 'Recurring?',
+	                value: '',
+	                onChange: handleRecurring
+	              })
+	            )
+	          ),
+	          recurring ? _react2.default.createElement(_Frequency2.default, null) : null
+	        )
 	      );
 	    }
 	  }]);
@@ -62511,7 +62652,7 @@
 	exports.default = Transactions;
 
 /***/ },
-/* 597 */
+/* 598 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -62558,32 +62699,72 @@
 	        _react2.default.createElement(
 	          'h1',
 	          null,
-	          'Frequency'
+	          'How Often I Pay The Bitches:'
 	        ),
-	        _react2.default.createElement('input', {
-	          type: 'radio',
-	          name: 'frequency radio',
-	          placeholder: 'Daily',
-	          value: ''
-	        }),
-	        _react2.default.createElement('input', {
-	          type: 'radio',
-	          name: 'frequency radio',
-	          placeholder: 'Weekly',
-	          value: ''
-	        }),
-	        _react2.default.createElement('input', {
-	          type: 'radio',
-	          name: 'frequency radio',
-	          placeholder: 'Monthly',
-	          value: ''
-	        }),
-	        _react2.default.createElement('input', {
-	          type: 'radio',
-	          name: 'frequency radio',
-	          placeholder: 'Annually',
-	          value: ''
-	        })
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'frequency-field' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'frequency-radio' },
+	            _react2.default.createElement('input', {
+	              type: 'radio',
+	              name: 'frequency radio',
+	              placeholder: 'Daily',
+	              value: ''
+	            }),
+	            _react2.default.createElement(
+	              'p',
+	              null,
+	              'Daily'
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'frequency-radio' },
+	            _react2.default.createElement('input', {
+	              type: 'radio',
+	              name: 'frequency radio',
+	              placeholder: 'Weekly',
+	              value: ''
+	            }),
+	            _react2.default.createElement(
+	              'p',
+	              null,
+	              'Weekly'
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'frequency-radio' },
+	            _react2.default.createElement('input', {
+	              type: 'radio',
+	              name: 'frequency radio',
+	              placeholder: 'Monthly',
+	              value: ''
+	            }),
+	            _react2.default.createElement(
+	              'p',
+	              null,
+	              'Monthly'
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'frequency-radio' },
+	            _react2.default.createElement('input', {
+	              type: 'radio',
+	              name: 'frequency radio',
+	              placeholder: 'Annually',
+	              value: ''
+	            }),
+	            _react2.default.createElement(
+	              'p',
+	              null,
+	              'Annually'
+	            )
+	          )
+	        )
 	      );
 	    }
 	  }]);
@@ -62594,7 +62775,7 @@
 	exports.default = Frequency;
 
 /***/ },
-/* 598 */
+/* 599 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -62646,7 +62827,7 @@
 	          'button',
 	          {
 	            disabled: submitDisabled,
-	            className: 'SubmitBtn',
+	            className: 'submit-button all-buttons',
 	            onClick: handleTransactionOnclick },
 	          'Submit'
 	        )
@@ -62660,99 +62841,51 @@
 	exports.default = SubmitButton;
 
 /***/ },
-/* 599 */
-/***/ function(module, exports, __webpack_require__) {
+/* 600 */
+/***/ function(module, exports) {
 
-	'use strict';
+	// import React from 'react'
+	// import { render } from 'react-dom';
+	// import firebase, { reference } from '../firebase';
 
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
+	// export default class FlowSchedule extends React.Component {
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	// <<<<<<< ct_monthlyAmts
+	// =======
+	//   // monthFilter(content, 1)
 
-	var _react = __webpack_require__(299);
+	//   monthFilter(content, selectedMonth) {
+	//     content.map((transaction, i) => {
+	//       if (transaction.month === selectedMonth) {
+	//         console.log('yo');
+	//         // selectedMonth.push(transaction);
+	//       }
+	//     });
+	//   }
 
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactDom = __webpack_require__(329);
-
-	var _firebase = __webpack_require__(476);
-
-	var _firebase2 = _interopRequireDefault(_firebase);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var FlowSchedule = function (_React$Component) {
-	  _inherits(FlowSchedule, _React$Component);
-
-	  function FlowSchedule() {
-	    _classCallCheck(this, FlowSchedule);
-
-	    return _possibleConstructorReturn(this, (FlowSchedule.__proto__ || Object.getPrototypeOf(FlowSchedule)).apply(this, arguments));
-	  }
-
-	  _createClass(FlowSchedule, [{
-	    key: 'monthFilter',
-
-
-	    // monthFilter(content, 1)
-
-	    value: function monthFilter(content, selectedMonth) {
-	      content.map(function (transaction, i) {
-	        if (transaction.month === selectedMonth) {
-	          console.log('yo');
-	          // selectedMonth.push(transaction);
-	        }
-	      });
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var content = this.props.content;
-
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        content.map(function (content, i) {
-	          return _react2.default.createElement(
-	            'article',
-	            { key: i },
-	            _react2.default.createElement(
-	              'p',
-	              { className: 'flow-schedule-name' },
-	              content.whom
-	            ),
-	            _react2.default.createElement(
-	              'p',
-	              { className: 'flow-schedule-amount' },
-	              '$',
-	              content.amount
-	            ),
-	            _react2.default.createElement(
-	              'p',
-	              { className: 'flow-schedule-date' },
-	              content.date
-	            )
-	          );
-	        })
-	      );
-	    }
-	  }]);
-
-	  return FlowSchedule;
-	}(_react2.default.Component);
-
-	exports.default = FlowSchedule;
+	// >>>>>>> master
+	//   render() {
+	//     const { content, handleDelete } = this.props
+	//     return (
+	//       <div>
+	//         {/* {content.map((content, i) => {
+	//           return (
+	//             <article key={i}>
+	//               <p className='flow-schedule-name'>{content.whom}</p>
+	//               <p className='flow-schedule-amount'>${content.amount}</p>
+	//               <p className='flow-schedule-date'>{content.date}</p>
+	//             </article>
+	//           )
+	//         })} */}
+	//         <p>I'm useless</p>
+	//       </div>
+	//     )
+	//   }
+	// }
+	"use strict";
 
 /***/ },
-/* 600 */
+/* 601 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -62802,6 +62935,8 @@
 	  }, {
 	    key: 'displayMonth',
 	    value: function displayMonth() {
+	      var _this2 = this;
+
 	      return this.state.neededMonths.map(function (day, i) {
 	        return _react2.default.createElement(
 	          'li',
@@ -62821,9 +62956,36 @@
 	            'h2',
 	            null,
 	            day.date
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            {
+	              onClick: function onClick() {
+	                return _this2.handleDelete(day.key);
+	              }
+	            },
+	            'Delete'
 	          )
 	        );
 	      });
+	    }
+	  }, {
+	    key: 'handleDelete',
+	    value: function handleDelete(transactionId) {
+	      var removedItem = this.state.neededMonths.filter(function (transaction) {
+	        return transaction.key !== transactionId;
+	      });
+	      this.setState({ neededMonths: removedItem });
+	    }
+	  }, {
+	    key: 'displayMonthlyAmount',
+	    value: function displayMonthlyAmount() {
+	      var amounts = this.state.neededMonths.map(function (day) {
+	        return +day.amount;
+	      });
+	      return amounts.reduce(function (a, b) {
+	        return a + b;
+	      }, 0);
 	    }
 	  }, {
 	    key: 'handleMonthFilter',
@@ -62837,64 +62999,74 @@
 	        'div',
 	        null,
 	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.handleMonthFilter, id: 1 },
-	          'January'
+	          'nav',
+	          { className: 'month-buttons' },
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.handleMonthFilter, id: 1 },
+	            'January'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.handleMonthFilter, id: 2 },
+	            'February'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.handleMonthFilter, id: 3 },
+	            'March'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.handleMonthFilter, id: 4 },
+	            'April'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.handleMonthFilter, id: 5 },
+	            'May'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.handleMonthFilter, id: 6 },
+	            'June'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.handleMonthFilter, id: 7 },
+	            'July'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.handleMonthFilter, id: 8 },
+	            'August'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.handleMonthFilter, id: 9 },
+	            'September'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.handleMonthFilter, id: 10 },
+	            'October'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.handleMonthFilter, id: 11 },
+	            'November'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.handleMonthFilter, id: 12 },
+	            'December'
+	          )
 	        ),
 	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.handleMonthFilter, id: 2 },
-	          'February'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.handleMonthFilter, id: 3 },
-	          'March'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.handleMonthFilter, id: 4 },
-	          'April'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.handleMonthFilter, id: 5 },
-	          'May'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.handleMonthFilter, id: 6 },
-	          'June'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.handleMonthFilter, id: 7 },
-	          'July'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.handleMonthFilter, id: 8 },
-	          'August'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.handleMonthFilter, id: 9 },
-	          'September'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.handleMonthFilter, id: 10 },
-	          'October'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.handleMonthFilter, id: 11 },
-	          'November'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.handleMonthFilter, id: 12 },
-	          'December'
+	          'h2',
+	          null,
+	          'All The Flow I Owe: $ ',
+	          this.displayMonthlyAmount()
 	        ),
 	        _react2.default.createElement(
 	          'ul',
@@ -62911,23 +63083,101 @@
 	exports.default = MonthFinder;
 
 /***/ },
-/* 601 */
+/* 602 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(299);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(329);
+
+	var _firebase = __webpack_require__(476);
+
+	var _firebase2 = _interopRequireDefault(_firebase);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var SubmitFunds = function (_React$Component) {
+	  _inherits(SubmitFunds, _React$Component);
+
+	  function SubmitFunds() {
+	    _classCallCheck(this, SubmitFunds);
+
+	    return _possibleConstructorReturn(this, (SubmitFunds.__proto__ || Object.getPrototypeOf(SubmitFunds)).apply(this, arguments));
+	  }
+
+	  _createClass(SubmitFunds, [{
+	    key: 'render',
+	    value: function render() {
+	      var _props = this.props,
+	          handleFunds = _props.handleFunds,
+	          submitFundsDisabled = _props.submitFundsDisabled,
+	          funds = _props.funds,
+	          submitFunds = _props.submitFunds;
+
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          'h1',
+	          null,
+	          'My Scrilla To Put In The Pot:'
+	        ),
+	        _react2.default.createElement('input', { className: 'input-field transactions',
+	          value: funds,
+	          type: 'number',
+	          onChange: handleFunds
+	        }),
+	        _react2.default.createElement(
+	          'button',
+	          {
+	            className: 'submit-funds',
+	            disabled: submitFundsDisabled,
+	            onClick: submitFunds },
+	          'Submit Funds'
+	        )
+	      );
+	    }
+	  }]);
+
+	  return SubmitFunds;
+	}(_react2.default.Component);
+
+	exports.default = SubmitFunds;
+
+/***/ },
+/* 603 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(602);
+	var content = __webpack_require__(604);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(604)(content, {});
+	var update = __webpack_require__(606)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/sass-loader/index.js!./style.scss", function() {
-				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/sass-loader/index.js!./style.scss");
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./style.scss", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./style.scss");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -62937,21 +63187,21 @@
 	}
 
 /***/ },
-/* 602 */
+/* 604 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(603)();
+	exports = module.exports = __webpack_require__(605)();
 	// imports
 
 
 	// module
-	exports.push([module.id, "\n", ""]);
+	exports.push([module.id, "body {\n  font-family: \"Open Sans\", sans-serif;\n  background-color: #fafafa;\n  width: 75%;\n  text-align: center;\n  margin: auto; }\n\nbutton {\n  margin: 1vw;\n  width: 23vw;\n  height: 5vh;\n  border-radius: 5px;\n  border-style: none; }\n  button:hover {\n    cursor: pointer;\n    background-color: grey; }\n\nul {\n  list-style-type: none;\n  font-size: 30px; }\n\n.funds {\n  font-family: \"Lora\", serif; }\n\n.title {\n  font-size: 5em;\n  text-align: center; }\n\n.transaction-field {\n  margin: auto; }\n\n.transactions {\n  margin: 1vw;\n  width: 50%;\n  height: 5vh;\n  border-radius: 5px; }\n\n.input-field {\n  display: inline-block;\n  margin: auto;\n  width: 80%; }\n\n.frequency-field {\n  display: inline-block; }\n\n.frequency-radio {\n  display: inline-block;\n  margin: 1vw; }\n\n.submit-button {\n  width: 73vw; }\n", ""]);
 
 	// exports
 
 
 /***/ },
-/* 603 */
+/* 605 */
 /***/ function(module, exports) {
 
 	/*
@@ -63007,7 +63257,7 @@
 
 
 /***/ },
-/* 604 */
+/* 606 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
