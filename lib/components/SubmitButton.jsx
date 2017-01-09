@@ -9,7 +9,7 @@ export default class SubmitButton extends React.Component {
       <div>
         <button
           disabled={submitDisabled}
-          className='SubmitBtn'
+          className='submit-button all-buttons'
           onClick={handleTransactionOnclick}>Submit
         </button>
       </div>

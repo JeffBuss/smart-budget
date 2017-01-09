@@ -50,18 +50,20 @@ export default class MonthFinder extends React.Component {
   render() {
     return (
       <div>
-        <button onClick={this.handleMonthFilter} id={1}>January</button>
-        <button onClick={this.handleMonthFilter} id={2}>February</button>
-        <button onClick={this.handleMonthFilter} id={3}>March</button>
-        <button onClick={this.handleMonthFilter} id={4}>April</button>
-        <button onClick={this.handleMonthFilter} id={5}>May</button>
-        <button onClick={this.handleMonthFilter} id={6}>June</button>
-        <button onClick={this.handleMonthFilter} id={7}>July</button>
-        <button onClick={this.handleMonthFilter} id={8}>August</button>
-        <button onClick={this.handleMonthFilter} id={9}>September</button>
-        <button onClick={this.handleMonthFilter} id={10}>October</button>
-        <button onClick={this.handleMonthFilter} id={11}>November</button>
-        <button onClick={this.handleMonthFilter} id={12}>December</button>
+        <nav className='month-buttons'>
+          <button onClick={this.handleMonthFilter} id={1}>January</button>
+          <button onClick={this.handleMonthFilter} id={2}>February</button>
+          <button onClick={this.handleMonthFilter} id={3}>March</button>
+          <button onClick={this.handleMonthFilter} id={4}>April</button>
+          <button onClick={this.handleMonthFilter} id={5}>May</button>
+          <button onClick={this.handleMonthFilter} id={6}>June</button>
+          <button onClick={this.handleMonthFilter} id={7}>July</button>
+          <button onClick={this.handleMonthFilter} id={8}>August</button>
+          <button onClick={this.handleMonthFilter} id={9}>September</button>
+          <button onClick={this.handleMonthFilter} id={10}>October</button>
+          <button onClick={this.handleMonthFilter} id={11}>November</button>
+          <button onClick={this.handleMonthFilter} id={12}>December</button>
+        </nav>
         <h2>Total Monthly Amount: $ {this.displayMonthlyAmount()}</h2>
         <ul>{this.displayMonth()}</ul>
       </div>
