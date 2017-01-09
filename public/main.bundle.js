@@ -29537,7 +29537,6 @@
 	    _this.handleAmountChange = _this.handleAmountChange.bind(_this);
 	    _this.handleDateChange = _this.handleDateChange.bind(_this);
 	    _this.handleTransactionOnclick = _this.handleTransactionOnclick.bind(_this);
-	    // this.handleDelete = this.handleDelete.bind(this)
 	    _this.handleFunds = _this.handleFunds.bind(_this);
 	    _this.submitFunds = _this.submitFunds.bind(_this);
 	    _this.handleRecurring = _this.handleRecurring.bind(_this);
@@ -29750,7 +29749,6 @@
 	        _react2.default.createElement(_MonthFinder2.default, {
 	          content: content,
 	          deleteContent: this.deleteContent.bind(this)
-	          // handleDelete={this.handleDelete}
 	        })
 	      );
 	    }

@@ -10,7 +10,6 @@ import MonthFinder from './components/MonthFinder';
 import SubmitFunds from './components/SubmitFunds';
 import Quote from './components/Quotes.jsx';
 
-
 export default class Application extends React.Component {
   constructor() {
     super();

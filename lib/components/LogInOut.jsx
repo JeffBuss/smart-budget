@@ -31,4 +31,4 @@ export const LogInOut = ({ user }) => {
   }
 };
 
-module.exports = LogInOut;
+// module.exports = LogInOut;
