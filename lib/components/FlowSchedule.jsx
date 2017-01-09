@@ -4,7 +4,7 @@ import firebase, { reference } from '../firebase';
 
 export default class FlowSchedule extends React.Component {
 
-  monthFilter(content, 1)
+  // monthFilter(content, 1)
 
   monthFilter(content, selectedMonth) {
     content.map((transaction, i) => {
@@ -16,10 +16,10 @@ export default class FlowSchedule extends React.Component {
   }
 
   render() {
-    const { content } = this.props
+    const { content, handleDelete } = this.props
     return (
       <div>
-        {content.map((content, i) => {
+        {/* {content.map((content, i) => {
           return (
             <article key={i}>
               <p className='flow-schedule-name'>{content.whom}</p>
@@ -27,7 +27,8 @@ export default class FlowSchedule extends React.Component {
               <p className='flow-schedule-date'>{content.date}</p>
             </article>
           )
-        })}
+        })} */}
+        <p>I'm useless</p>
       </div>
     )
   }
