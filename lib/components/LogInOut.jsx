@@ -1,5 +1,6 @@
 import React from 'react';
 import { signIn, signOut } from '../firebase';
+import Quote from './Quotes';
 
 export const LogInOut = ({ user }) => {
   if (user) {
@@ -19,6 +20,7 @@ export const LogInOut = ({ user }) => {
   } else {
     return (
       <div>
+        <p>{Quote()}</p>
         <button
           className='sign-in'
           onClick={() => signIn()}>
