@@ -75,7 +75,7 @@ export default class Application extends React.Component {
   }
 
   handleRecurring() {
-    this.setState({ recurring: !this.state.checked });
+    this.setState({ recurring: !this.state.recurring });
   }
 
   submitFunds() {

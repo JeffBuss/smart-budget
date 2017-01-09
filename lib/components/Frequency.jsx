@@ -45,9 +45,8 @@ export default class Frequency extends React.Component {
             />
             <p>Annually</p>
           </div>
-
         </div>
-      </div> 
+      </div>
     );
   }
 }
