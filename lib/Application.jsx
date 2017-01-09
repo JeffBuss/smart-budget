@@ -84,9 +84,13 @@ export default class Application extends React.Component {
     this.setState({ funds: funds}, () => {
       const { funds } = this.state
       this.setState({funds: '', currentFunds: funds}, () => {
-        return this.updateBalance()
+        this.updateBalance()
       })
     })
+  }
+
+  deleteContent() {
+
   }
 
   updateBalance() {
