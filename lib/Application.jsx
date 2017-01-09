@@ -9,7 +9,7 @@ import SubmitButton from './components/SubmitButton';
 import FlowSchedule from './components/FlowSchedule';
 import MonthFinder from './components/MonthFinder';
 import SubmitFunds from './components/SubmitFunds';
-import Quote from './components/Quotes.jsx'
+import Quote from './components/Quotes.jsx';
 
 
 export default class Application extends React.Component {
@@ -23,33 +23,35 @@ export default class Application extends React.Component {
       month: '',
       content: [],
       funds: '',
-      bankAccount:[],
+      bankAccount: [],
       recurring: false,
     };
 
-    this.handleThiefChange = this.handleThiefChange.bind(this)
-    this.handleAmountChange = this.handleAmountChange.bind(this)
-    this.handleDateChange = this.handleDateChange.bind(this)
-    this.handleTransactionOnclick = this.handleTransactionOnclick.bind(this)
+    this.handleThiefChange = this.handleThiefChange.bind(this);
+    this.handleAmountChange = this.handleAmountChange.bind(this);
+    this.handleDateChange = this.handleDateChange.bind(this);
+    this.handleTransactionOnclick = this.handleTransactionOnclick.bind(this);
     // this.handleDelete = this.handleDelete.bind(this)
-    this.handleFunds = this.handleFunds.bind(this)
-    this.submitFunds = this.submitFunds.bind(this)
-    this.handleRecurring = this.handleRecurring.bind(this)
+    this.handleFunds = this.handleFunds.bind(this);
+    this.submitFunds = this.submitFunds.bind(this);
+    this.handleRecurring = this.handleRecurring.bind(this);
   }
 
   componentDidMount() {
-    firebase.database().ref('content').limitToLast(100).on('value', (snapshot) => {
+    firebase.database().ref('content').limitToLast(100)
+    .on('value', (snapshot) => {
       const content = snapshot.val() || {};
       this.setState({
         content: map(content, (val, key) => extend(val, { key })),
       });
-    })
-      firebase.database().ref('funds').limitToLast(100).on('value', (snapshot) => {
-        const content = snapshot.val() || {};
-        this.setState({
-          bankAccount: map(content, (val, key) => extend(val, { key })),
-        });
-      })
+    });
+    firebase.database().ref('funds').limitToLast(100)
+    .on('value', (snapshot) => {
+      const content = snapshot.val() || {};
+      this.setState({
+        bankAccount: map(content, (val, key) => extend(val, { key })),
+      });
+    });
     firebase.auth().onAuthStateChanged(user => this.setState({ user }));
   }
 
@@ -67,11 +69,11 @@ export default class Application extends React.Component {
     const date = e.target.value;
     this.setState({ date }, () => {
       this.getMonth();
-    })
+    });
   }
 
   handleFunds(e) {
-    this.setState({funds: e.target.value})
+    this.setState({ funds: e.target.value });
   }
 
   handleRecurring() {
@@ -81,46 +83,57 @@ export default class Application extends React.Component {
   submitFunds() {
     const { funds } = this.state;
     firebase.database().ref('funds').push({ funds });
-    this.setState({ funds: funds}, () => {
-      const { funds } = this.state
-      this.setState({funds: '', currentFunds: funds}, () => {
-        this.updateBalance()
-      })
-    })
+    this.setState({ funds }, () => {
+      this.setState({ funds: '', currentFunds: funds }, () => {
+        this.updateBalance();
+      });
+    });
   }
 
-  deleteContent() {
+  deleteContent(transactionId) {
+    this.removeFromContentState(transactionId);
+    this.removeFromFB(transactionId);
+  }
 
+  removeFromContentState(transactionId) {
+    const remainingContent = this.state.content.filter((transaction) => {
+      return transaction.key !== transactionId;
+    });
+    this.setState({ content: remainingContent });
+  }
+
+  removeFromFB(transactionId) {
+    firebase.database().ref('content').child(transactionId)
+    .remove();
   }
 
   updateBalance() {
-    const newBalance = this.reduceAssets() - this.reduceLiabilities()
-    return newBalance
+    const newBalance = this.reduceAssets() - this.reduceLiabilities();
+    return newBalance;
   }
 
-
   reduceAssets() {
-    let assets = this.state.bankAccount.map(deposits => +deposits.funds)
-    let balance = assets.reduce((a, b) => a + b, 0)
-    return balance
+    const assets = this.state.bankAccount.map(deposits => +deposits.funds);
+    const balance = assets.reduce((a, b) => a + b, 0);
+    return balance;
   }
 
   reduceLiabilities() {
-    let liabilities = this.state.content.map(transaction => +transaction.amount)
-    let liabilityBalance = liabilities.reduce((a, b) => a + b, 0)
-    return liabilityBalance
+    const liabilities = this.state.content.map(transaction => +transaction.amount);
+    const liabilityBalance = liabilities.reduce((a, b) => a + b, 0);
+    return liabilityBalance;
   }
 
   submitFundsDisabled() {
-    return !this.state.funds
+    return !this.state.funds;
   }
 
   submitDisabled() {
-    return !this.state.whom || ! this.state.amount || !this.state.date
+    return !this.state.whom || ! this.state.amount || !this.state.date;
   }
 
   getMonth() {
-    this.setState({ month: +this.state.date.split('-')[1] })
+    this.setState({ month: +this.state.date.split('-')[1] });
   }
 
   handleTransactionOnclick() {
@@ -136,8 +149,8 @@ export default class Application extends React.Component {
       amount: '',
       date: '',
     });
-    this.updateBalance()
-    }
+    this.updateBalance();
+  }
 
   render() {
     const { user, date, amount, whom, content, funds, recurring } = this.state;
@@ -169,12 +182,9 @@ export default class Application extends React.Component {
           handleTransactionOnclick={this.handleTransactionOnclick}
           submitDisabled={this.submitDisabled()}
         />
-        {/* <FlowSchedule
-          content={content}
-        /> */}
         <MonthFinder
           content={content}
-          updateBalance={this.deleteContent.bind(this)}
+          deleteContent={this.deleteContent.bind(this)}
           // handleDelete={this.handleDelete}
         />
       </div>
