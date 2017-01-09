@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
-import firebase, { reference } from './firebase';
+import firebase from './firebase';
 import moment from 'moment';
 import { pick, map, extend } from 'lodash';
 import { LogInOut } from './components/LogInOut';
@@ -22,6 +22,7 @@ export default class Application extends React.Component {
       month: '',
       content: [],
       funds: '',
+      bankAccount:[],
     };
 
     this.handleThiefChange = this.handleThiefChange.bind(this)
@@ -34,12 +35,24 @@ export default class Application extends React.Component {
   }
 
   componentDidMount() {
-    reference.limitToLast(100).on('value', (snapshot) => {
-    const content = snapshot.val() || {}
-    this.setState({
-      content: map(content, (val, key) => extend(val, { key }))
-      })
+    firebase.database().ref('content').limitToLast(100).on('value', (snapshot) => {
+      const content = snapshot.val() || {};
+      this.setState({
+        content: map(content, (val, key) => extend(val, { key })),
+      });
     })
+      firebase.database().ref('funds').limitToLast(100).on('value', (snapshot) => {
+        const content = snapshot.val() || {};
+        this.setState({
+          bankAccount: map(content, (val, key) => extend(val, { key })),
+        });
+      })
+    // firebase.database().ref('funds').on('value', (snapshot) => {
+    //   const fundsObj = snapshot.val() || {};
+    //   const objKey = Object.keys(fundsObj);
+    //   const currentFunds = fundsObj[objKey].funds;
+    //   this.setState({ funds: currentFunds });
+    // })
     firebase.auth().onAuthStateChanged(user => this.setState({ user }));
   }
 
@@ -66,11 +79,18 @@ export default class Application extends React.Component {
 
   submitFunds() {
     const { funds } = this.state;
-    // reference.push({ funds })
+    firebase.database().ref('funds').push({ funds });
     this.setState({ funds: funds}, () => {
       const { funds } = this.state
-      this.setState({funds: '', currentFunds: funds})
+      this.setState({funds: '', currentFunds: funds}, () => {
+     console.log(this.reduceAssets())
+      })
     })
+  }
+
+  reduceAssets() {
+    let assets = this.state.bankAccount.map(deposits => +deposits.funds)
+    return (assets.reduce((a, b) => a + b, 0))
   }
 
   renderFunds() {
