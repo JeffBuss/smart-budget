@@ -1,19 +1,19 @@
-import React from 'react'
+import React from 'react';
 
 export default class MonthFinder extends React.Component {
   constructor() {
-    super()
+    super();
     this.state = {
       neededMonths: [],
-    }
+    };
 
-    this.handleMonthFilter = this.handleMonthFilter.bind(this)
+    this.handleMonthFilter = this.handleMonthFilter.bind(this);
   }
 
   filterByMonth(date) {
     const allMatches = this.props.content
-      .filter(transaction => +transaction.date.split('-')[1] === +date)
-    this.setState({neededMonths: allMatches})
+      .filter(transaction => +transaction.date.split('-')[1] === +date);
+    this.setState({ neededMonths: allMatches });
   }
 
   displayMonth() {
@@ -27,26 +27,26 @@ export default class MonthFinder extends React.Component {
             onClick={ () => this.handleDelete(day.key) }
           >Delete</button>
         </li>
-      )
-    })
+      );
+    });
   }
+
   handleDelete(transactionId) {
-    let removedItem = this.state.neededMonths.filter((transaction) => {
+    const filteredTransByMonth = this.state.neededMonths.filter((transaction) => {
       return transaction.key !== transactionId;
     });
-    this.setState({ neededMonths: removedItem }, () => {
-      debugger;
-      this.props.deleteContent();
+    this.setState({ neededMonths: filteredTransByMonth }, () => {
+      this.props.deleteContent(transactionId);
     });
   }
 
   displayMonthlyAmount() {
-    const amounts = this.state.neededMonths.map(day => +day.amount)
-      return (amounts.reduce((a, b) => a + b, 0))
+    const amounts = this.state.neededMonths.map(day => +day.amount);
+    return (amounts.reduce((a, b) => a + b, 0));
   }
 
   handleMonthFilter(e) {
-    this.filterByMonth(e.target.id)
+    this.filterByMonth(e.target.id);
   }
 
   render() {
@@ -69,6 +69,6 @@ export default class MonthFinder extends React.Component {
         <h2>All The Flow I Owe: $ {this.displayMonthlyAmount()}</h2>
         <ul>{this.displayMonth()}</ul>
       </div>
-    )
+    );
   }
 }

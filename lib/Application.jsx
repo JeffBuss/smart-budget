@@ -89,14 +89,28 @@ export default class Application extends React.Component {
       });
     });
   }
-  deleteContent() {
+
+  deleteContent(transactionId) {
+    this.removeFromContentState(transactionId);
+    this.removeFromFB(transactionId);
+  }
+
+  removeFromContentState(transactionId) {
+    const remainingContent = this.state.content.filter((transaction) => {
+      return transaction.key !== transactionId;
+    });
+    this.setState({ content: remainingContent });
+  }
+
+  removeFromFB(transactionId) {
+    firebase.database().ref('content').child(transactionId)
+    .remove();
   }
 
   updateBalance() {
     const newBalance = this.reduceAssets() - this.reduceLiabilities();
     return newBalance;
   }
-
 
   reduceAssets() {
     const assets = this.state.bankAccount.map(deposits => +deposits.funds);
@@ -170,7 +184,7 @@ export default class Application extends React.Component {
         />
         <MonthFinder
           content={content}
-          updateBalance={this.deleteContent.bind(this)}
+          deleteContent={this.deleteContent.bind(this)}
           // handleDelete={this.handleDelete}
         />
       </div>
