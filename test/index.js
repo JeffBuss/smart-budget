@@ -8,6 +8,9 @@ import Frequency from '../lib/components/Frequency';
 import LogInOut from '../lib/components/LogInOut';
 import Quotes from '../lib/components/Quotes';
 import Transactions from '../lib/components/Transactions';
+import MonthFinder from '../lib/components/MonthFinder';
+import SubmitButton from '../lib/components/SubmitButton';
+import SubmitFunds from '../lib/components/SubmitFunds';
 
 describe("Application", () => {
 
@@ -97,5 +100,45 @@ describe('Transactions', () => {
 
   it('should have a transactions h1', () => {
     expect(wrapper.find('h1')).to.be.length(1);
+  });
+});
+
+describe('MonthFinder', () => {
+  const wrapper = shallow(<MonthFinder />);
+
+  it('should render as a <div>', () => {
+    assert.equal(wrapper.type(), 'div');
+  });
+});
+
+describe('SubmitButton', () => {
+  const wrapper = shallow(<SubmitButton />);
+
+  it('should render as a <div>', () => {
+    assert.equal(wrapper.type(), 'div');
+  });
+
+  it('should render a submit button', () => {
+    expect(wrapper.find('.submit-button')).to.be.length(1);
+  });
+});
+
+describe('SubmitFunds', () => {
+  const wrapper = shallow(<SubmitFunds />);
+
+  it('should render as a <div>', () => {
+    assert.equal(wrapper.type(), 'div');
+  });
+
+  it('should have a My Scrilla h1', () => {
+    expect(wrapper.find('h1')).to.be.length(1);
+  });
+
+  it('should render a transaction input field', () => {
+    expect(wrapper.find('.transactions')).to.be.length(1);
+  });
+
+  it('should render a submit funds button', () => {
+    expect(wrapper.find('.submit-funds')).to.be.length(1);
   });
 });
