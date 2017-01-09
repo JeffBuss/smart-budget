@@ -6,7 +6,7 @@ import Frequency from './Frequency';
 export default class Transactions extends React.Component {
 
   render() {
-    const { whom, amount, date, handleThiefChange, handleAmountChange, handleDateChange } = this.props
+    const { whom, amount, date, recurring, handleThiefChange, handleAmountChange, handleDateChange, handleRecurring } = this.props
     return (
       <div>
         <div className='input-field'>
@@ -40,13 +40,14 @@ export default class Transactions extends React.Component {
               <p>Pay The Bitches More Than Once?</p>
               <input
                 className='recurring-input'
-                type='radio'
+                type='checkbox'
                 placeholder='Recurring?'
                 value=''
+                onChange={handleRecurring}
               />
             </div>
           </div>
-          <Frequency />
+          { recurring ? <Frequency /> : null }
         </div>
       </div>
     )

@@ -47,6 +47,6 @@ export default class Frequency extends React.Component {
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
