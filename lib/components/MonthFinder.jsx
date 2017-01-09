@@ -23,9 +23,15 @@ export default class MonthFinder extends React.Component {
           <h2>{day.whom}</h2>
           <h2>${day.amount}</h2>
           <h2>{day.date}</h2>
+          {/* <h2>{this.state.neededMonths.map(day => day.amount).reduce((a, b) => a +b)}</h2> */}
         </li>
       )
     })
+  }
+
+  displayMonthlyAmount() {
+    const amounts = this.state.neededMonths.map(day => +day.amount)
+      return (amounts.reduce((a, b) => a + b, 0))
   }
 
   handleMonthFilter(e) {
@@ -47,8 +53,8 @@ export default class MonthFinder extends React.Component {
         <button onClick={this.handleMonthFilter} id={10}>October</button>
         <button onClick={this.handleMonthFilter} id={11}>November</button>
         <button onClick={this.handleMonthFilter} id={12}>December</button>
-
         <ul>{this.displayMonth()}</ul>
+        <h2>$ {this.displayMonthlyAmount()}</h2>
       </div>
     )
   }
