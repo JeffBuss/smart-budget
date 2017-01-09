@@ -20,12 +20,12 @@ export const LogInOut = ({ user }) => {
   } else {
     return (
       <div>
+        <p>{Quote()}</p>
         <button
           className='sign-in'
           onClick={() => signIn()}>
           Login
         </button>
-        <p>{Quote()}</p>
       </div>
     );
   }
