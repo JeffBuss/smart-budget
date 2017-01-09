@@ -1,4 +1,4 @@
-export const Quote = () => {
+const Quote = () => {
   const quotesArray = [
     '"Floss a little; invest up in a mutual fund." (Busta Rhymes, “Dangerous”)',
     '"Men lie, women lie, numbers don’t.” (Jay Z, "Reminder")',
@@ -12,4 +12,7 @@ export const Quote = () => {
     '"Id be lying if I said I didnt want millions / More than money saved, I wanna save children." (Common, "The 6th Sense")',
   ];
   const randomQuote = quotesArray[Math.floor(Math.random() * quotesArray.length)];
+  return randomQuote;
 };
+
+export default Quote;

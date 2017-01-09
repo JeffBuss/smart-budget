@@ -1,5 +1,6 @@
 import React from 'react';
 import { signIn, signOut } from '../firebase';
+import Quote from './Quotes';
 
 export const LogInOut = ({ user }) => {
   if (user) {
@@ -24,6 +25,7 @@ export const LogInOut = ({ user }) => {
           onClick={() => signIn()}>
           Login
         </button>
+        <p>{Quote()}</p>
       </div>
     );
   }
