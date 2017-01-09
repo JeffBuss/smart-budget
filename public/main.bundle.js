@@ -34,7 +34,7 @@
 /******/ 	__webpack_require__.c = installedModules;
 
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
+/******/ 	__webpack_require__.p = "/public/";
 
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(0);
@@ -8210,7 +8210,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	__webpack_require__(603);
+	__webpack_require__(602);
 
 	(0, _reactDom.render)(_react2.default.createElement(_Application2.default, null), document.getElementById('application'));
 
@@ -29493,15 +29493,11 @@
 
 	var _SubmitButton2 = _interopRequireDefault(_SubmitButton);
 
-	var _FlowSchedule = __webpack_require__(600);
-
-	var _FlowSchedule2 = _interopRequireDefault(_FlowSchedule);
-
-	var _MonthFinder = __webpack_require__(601);
+	var _MonthFinder = __webpack_require__(600);
 
 	var _MonthFinder2 = _interopRequireDefault(_MonthFinder);
 
-	var _SubmitFunds = __webpack_require__(602);
+	var _SubmitFunds = __webpack_require__(601);
 
 	var _SubmitFunds2 = _interopRequireDefault(_SubmitFunds);
 
@@ -29614,12 +29610,35 @@
 
 	      _firebase2.default.database().ref('funds').push({ funds: funds });
 	      this.setState({ funds: funds }, function () {
-	        var funds = _this4.state.funds;
-
 	        _this4.setState({ funds: '', currentFunds: funds }, function () {
-	          return _this4.reduceAssets();
+	          _this4.updateBalance();
 	        });
 	      });
+	    }
+	  }, {
+	    key: 'deleteContent',
+	    value: function deleteContent(transactionId) {
+	      this.removeFromContentState(transactionId);
+	      this.removeFromFB(transactionId);
+	    }
+	  }, {
+	    key: 'removeFromContentState',
+	    value: function removeFromContentState(transactionId) {
+	      var remainingContent = this.state.content.filter(function (transaction) {
+	        return transaction.key !== transactionId;
+	      });
+	      this.setState({ content: remainingContent });
+	    }
+	  }, {
+	    key: 'removeFromFB',
+	    value: function removeFromFB(transactionId) {
+	      _firebase2.default.database().ref('content').child(transactionId).remove();
+	    }
+	  }, {
+	    key: 'updateBalance',
+	    value: function updateBalance() {
+	      var newBalance = this.reduceAssets() - this.reduceLiabilities();
+	      return newBalance;
 	    }
 	  }, {
 	    key: 'reduceAssets',
@@ -29627,9 +29646,21 @@
 	      var assets = this.state.bankAccount.map(function (deposits) {
 	        return +deposits.funds;
 	      });
-	      return assets.reduce(function (a, b) {
+	      var balance = assets.reduce(function (a, b) {
 	        return a + b;
 	      }, 0);
+	      return balance;
+	    }
+	  }, {
+	    key: 'reduceLiabilities',
+	    value: function reduceLiabilities() {
+	      var liabilities = this.state.content.map(function (transaction) {
+	        return +transaction.amount;
+	      });
+	      var liabilityBalance = liabilities.reduce(function (a, b) {
+	        return a + b;
+	      }, 0);
+	      return liabilityBalance;
 	    }
 	  }, {
 	    key: 'submitFundsDisabled',
@@ -29655,7 +29686,7 @@
 	          date = _state.date,
 	          month = _state.month;
 
-	      reference.push({
+	      _firebase2.default.database().ref('content').push({
 	        whom: whom,
 	        amount: amount,
 	        date: date,
@@ -29666,6 +29697,7 @@
 	        amount: '',
 	        date: ''
 	      });
+	      this.updateBalance();
 	    }
 	  }, {
 	    key: 'render',
@@ -29698,7 +29730,7 @@
 	            'li',
 	            { className: 'funds' },
 	            'All My Scratch: $',
-	            this.reduceAssets()
+	            this.updateBalance()
 	          )
 	        ),
 	        _react2.default.createElement(_Transactions2.default, {
@@ -29716,7 +29748,8 @@
 	          submitDisabled: this.submitDisabled()
 	        }),
 	        _react2.default.createElement(_MonthFinder2.default, {
-	          content: content
+	          content: content,
+	          deleteContent: this.deleteContent.bind(this)
 	          // handleDelete={this.handleDelete}
 	        })
 	      );
@@ -62512,6 +62545,8 @@
 	  }
 	};
 
+	module.exports = LogInOut;
+
 /***/ },
 /* 596 */
 /***/ function(module, exports) {
@@ -62842,50 +62877,6 @@
 
 /***/ },
 /* 600 */
-/***/ function(module, exports) {
-
-	// import React from 'react'
-	// import { render } from 'react-dom';
-	// import firebase, { reference } from '../firebase';
-
-	// export default class FlowSchedule extends React.Component {
-
-	// <<<<<<< ct_monthlyAmts
-	// =======
-	//   // monthFilter(content, 1)
-
-	//   monthFilter(content, selectedMonth) {
-	//     content.map((transaction, i) => {
-	//       if (transaction.month === selectedMonth) {
-	//         console.log('yo');
-	//         // selectedMonth.push(transaction);
-	//       }
-	//     });
-	//   }
-
-	// >>>>>>> master
-	//   render() {
-	//     const { content, handleDelete } = this.props
-	//     return (
-	//       <div>
-	//         {/* {content.map((content, i) => {
-	//           return (
-	//             <article key={i}>
-	//               <p className='flow-schedule-name'>{content.whom}</p>
-	//               <p className='flow-schedule-amount'>${content.amount}</p>
-	//               <p className='flow-schedule-date'>{content.date}</p>
-	//             </article>
-	//           )
-	//         })} */}
-	//         <p>I'm useless</p>
-	//       </div>
-	//     )
-	//   }
-	// }
-	"use strict";
-
-/***/ },
-/* 601 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -62972,10 +62963,14 @@
 	  }, {
 	    key: 'handleDelete',
 	    value: function handleDelete(transactionId) {
-	      var removedItem = this.state.neededMonths.filter(function (transaction) {
+	      var _this3 = this;
+
+	      var filteredTransByMonth = this.state.neededMonths.filter(function (transaction) {
 	        return transaction.key !== transactionId;
 	      });
-	      this.setState({ neededMonths: removedItem });
+	      this.setState({ neededMonths: filteredTransByMonth }, function () {
+	        _this3.props.deleteContent(transactionId);
+	      });
 	    }
 	  }, {
 	    key: 'displayMonthlyAmount',
@@ -63083,7 +63078,7 @@
 	exports.default = MonthFinder;
 
 /***/ },
-/* 602 */
+/* 601 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -63161,16 +63156,16 @@
 	exports.default = SubmitFunds;
 
 /***/ },
-/* 603 */
+/* 602 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(604);
+	var content = __webpack_require__(603);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(606)(content, {});
+	var update = __webpack_require__(605)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -63187,10 +63182,10 @@
 	}
 
 /***/ },
-/* 604 */
+/* 603 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(605)();
+	exports = module.exports = __webpack_require__(604)();
 	// imports
 
 
@@ -63201,7 +63196,7 @@
 
 
 /***/ },
-/* 605 */
+/* 604 */
 /***/ function(module, exports) {
 
 	/*
@@ -63257,7 +63252,7 @@
 
 
 /***/ },
-/* 606 */
+/* 605 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*

@@ -1,12 +1,12 @@
 import React from 'react'
 import { render } from 'react-dom';
-import firebase, { reference } from '../firebase';
+import firebase from '../firebase';
 
 export default class SubmitFunds extends React.Component {
 
   render() {
-    const {handleFunds, submitFundsDisabled, funds, submitFunds } = this.props
-    return(
+    const { handleFunds, submitFundsDisabled, funds, submitFunds } = this.props
+    return (
       <div>
         <h1>My Scrilla To Put In The Pot:</h1>
         <input className='input-field transactions'
@@ -20,6 +20,6 @@ export default class SubmitFunds extends React.Component {
           onClick={submitFunds}>Submit Funds
         </button>
       </div>
-    )
+    );
   }
 }
