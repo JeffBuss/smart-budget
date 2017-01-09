@@ -77,14 +77,27 @@ export default class Application extends React.Component {
     this.setState({ funds: funds}, () => {
       const { funds } = this.state
       this.setState({funds: '', currentFunds: funds}, () => {
-        return this.reduceAssets()
+        return this.updateBalance()
       })
     })
   }
 
+  updateBalance() {
+    const newBalance = this.reduceAssets() - this.reduceLiabilities()
+    return newBalance
+  }
+
+
   reduceAssets() {
     let assets = this.state.bankAccount.map(deposits => +deposits.funds)
-    return (assets.reduce((a, b) => a + b, 0))
+    let balance = assets.reduce((a, b) => a + b, 0)
+    return balance
+  }
+
+  reduceLiabilities() {
+    let liabilities = this.state.content.map(transaction => +transaction.amount)
+    let liabilityBalance = liabilities.reduce((a, b) => a + b, 0)
+    return liabilityBalance
   }
 
   submitFundsDisabled() {
@@ -101,7 +114,7 @@ export default class Application extends React.Component {
 
   handleTransactionOnclick() {
     const { whom, amount, date, month } = this.state;
-    reference.push({
+    firebase.database().ref('content').push({
       whom,
       amount,
       date,
@@ -112,7 +125,8 @@ export default class Application extends React.Component {
       amount: '',
       date: '',
     });
-  }
+    this.updateBalance()
+    }
 
   render() {
     const { user, date, amount, whom, content, funds } = this.state;
@@ -128,7 +142,7 @@ export default class Application extends React.Component {
           submitFundsDisabled={this.submitFundsDisabled()}
         />
           <ul>
-            <li className='funds'>All My Scratch: ${this.reduceAssets()}</li>
+            <li className='funds'>All My Scratch: ${this.updateBalance()}</li>
           </ul>
         <Transactions
           date={date}
@@ -147,6 +161,7 @@ export default class Application extends React.Component {
         /> */}
         <MonthFinder
           content={content}
+          updateBalance={this.deleteContent.bind(this)}
           // handleDelete={this.handleDelete}
         />
       </div>

@@ -34,7 +34,10 @@ export default class MonthFinder extends React.Component {
     let removedItem = this.state.neededMonths.filter((transaction) => {
       return transaction.key !== transactionId;
     });
-    this.setState({ neededMonths: removedItem });
+    this.setState({ neededMonths: removedItem }, () => {
+      debugger;
+      this.props.deleteContent();
+    });
   }
 
   displayMonthlyAmount() {
