@@ -43,14 +43,11 @@ export default class Transactions extends React.Component {
                 type='checkbox'
                 placeholder='Recurring?'
                 value=''
-                // recurring={recurring}
                 onChange={handleRecurring}
               />
             </div>
           </div>
-          <Frequency
-            recurring={recurring}
-          />
+          { recurring ? <Frequency /> : null }
         </div>
       </div>
     )
