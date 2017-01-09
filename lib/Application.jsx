@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
-import firebase, { reference } from './firebase';
+import firebase from './firebase';
 import moment from 'moment';
 import { pick, map, extend } from 'lodash';
 import { LogInOut } from './components/LogInOut';
@@ -23,6 +23,7 @@ export default class Application extends React.Component {
       month: '',
       content: [],
       funds: '',
+      bankAccount:[],
       recurring: false,
     };
 
@@ -37,12 +38,20 @@ export default class Application extends React.Component {
   }
 
   componentDidMount() {
-    reference.limitToLast(100).on('value', (snapshot) => {
-    const content = snapshot.val() || {};
-    this.setState({
-      content: map(content, (val, key) => extend(val, { key }))
-      })
-    })
+    firebase.database().ref('content').limitToLast(100)
+    .on('value', (snapshot) => {
+      const content = snapshot.val() || {};
+      this.setState({
+        content: map(content, (val, key) => extend(val, { key })),
+      });
+    });
+    firebase.database().ref('funds').limitToLast(100)
+    .on('value', (snapshot) => {
+      const content = snapshot.val() || {};
+      this.setState({
+        bankAccount: map(content, (val, key) => extend(val, { key })),
+      });
+    });
     firebase.auth().onAuthStateChanged(user => this.setState({ user }));
   }
 
@@ -68,20 +77,40 @@ export default class Application extends React.Component {
   }
 
   handleRecurring() {
-    this.setState({ recurring: !this.state.checked });
+    this.setState({ recurring: !this.state.recurring });
   }
 
   submitFunds() {
     const { funds } = this.state;
-    // reference.push({ funds })
+    firebase.database().ref('funds').push({ funds });
     this.setState({ funds: funds}, () => {
       const { funds } = this.state
-      this.setState({funds: '', currentFunds: funds})
+      this.setState({funds: '', currentFunds: funds}, () => {
+        this.updateBalance()
+      })
     })
   }
 
-  renderFunds() {
-    return this.state.currentFunds
+  deleteContent() {
+
+  }
+
+  updateBalance() {
+    const newBalance = this.reduceAssets() - this.reduceLiabilities()
+    return newBalance
+  }
+
+
+  reduceAssets() {
+    let assets = this.state.bankAccount.map(deposits => +deposits.funds)
+    let balance = assets.reduce((a, b) => a + b, 0)
+    return balance
+  }
+
+  reduceLiabilities() {
+    let liabilities = this.state.content.map(transaction => +transaction.amount)
+    let liabilityBalance = liabilities.reduce((a, b) => a + b, 0)
+    return liabilityBalance
   }
 
   submitFundsDisabled() {
@@ -98,7 +127,7 @@ export default class Application extends React.Component {
 
   handleTransactionOnclick() {
     const { whom, amount, date, month } = this.state;
-    reference.push({
+    firebase.database().ref('content').push({
       whom,
       amount,
       date,
@@ -109,7 +138,8 @@ export default class Application extends React.Component {
       amount: '',
       date: '',
     });
-  }
+    this.updateBalance()
+    }
 
   render() {
     const { user, date, amount, whom, content, funds, recurring } = this.state;
@@ -125,7 +155,7 @@ export default class Application extends React.Component {
           submitFundsDisabled={this.submitFundsDisabled()}
         />
           <ul>
-            <li className='funds'>${this.renderFunds()}</li>
+            <li className='funds'>All My Scratch: ${this.updateBalance()}</li>
           </ul>
         <Transactions
           date={date}
@@ -146,6 +176,7 @@ export default class Application extends React.Component {
         /> */}
         <MonthFinder
           content={content}
+          updateBalance={this.deleteContent.bind(this)}
           // handleDelete={this.handleDelete}
         />
       </div>

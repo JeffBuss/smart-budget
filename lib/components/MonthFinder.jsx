@@ -34,8 +34,10 @@ export default class MonthFinder extends React.Component {
     let removedItem = this.state.neededMonths.filter((transaction) => {
       return transaction.key !== transactionId;
     });
-    this.setState({ neededMonths: removedItem });
-    console.log('hi');
+    this.setState({ neededMonths: removedItem }, () => {
+      debugger;
+      this.props.deleteContent();
+    });
   }
 
   displayMonthlyAmount() {
@@ -64,7 +66,7 @@ export default class MonthFinder extends React.Component {
           <button onClick={this.handleMonthFilter} id={11}>November</button>
           <button onClick={this.handleMonthFilter} id={12}>December</button>
         </nav>
-        <h2>Total Monthly Amount: $ {this.displayMonthlyAmount()}</h2>
+        <h2>All The Flow I Owe: $ {this.displayMonthlyAmount()}</h2>
         <ul>{this.displayMonth()}</ul>
       </div>
     )

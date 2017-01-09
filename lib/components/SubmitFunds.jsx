@@ -8,7 +8,7 @@ export default class SubmitFunds extends React.Component {
     const {handleFunds, submitFundsDisabled, funds, submitFunds } = this.props
     return(
       <div>
-        <h1>My Scrilla</h1>
+        <h1>My Scrilla To Put In The Pot:</h1>
         <input className='input-field transactions'
           value={funds}
           type='number'

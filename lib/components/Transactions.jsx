@@ -11,7 +11,7 @@ export default class Transactions extends React.Component {
       <div>
         <div className='input-field'>
           <div className='transaction-field'>
-            <h1 className='transaction-title'>New Transaction</h1>
+            <h1 className='transaction-title'>Bitches I Gotta Pay:</h1>
             <input
               className='whom-input transactions'
               name='whom'
@@ -37,20 +37,17 @@ export default class Transactions extends React.Component {
               onChange={handleDateChange}
             />
             <div className='recurring-radio'>
-              <p>Recurring?</p>
+              <p>Pay The Bitches More Than Once?</p>
               <input
                 className='recurring-input'
                 type='checkbox'
                 placeholder='Recurring?'
                 value=''
-                // recurring={recurring}
                 onChange={handleRecurring}
               />
             </div>
           </div>
-          <Frequency
-            recurring={recurring}
-          />
+          { recurring ? <Frequency /> : null }
         </div>
       </div>
     )
