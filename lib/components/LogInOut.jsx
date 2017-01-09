@@ -20,7 +20,7 @@ export const LogInOut = ({ user }) => {
   } else {
     return (
       <div>
-        <p>{Quote()}</p>
+        <p>{ Quote() }</p>
         <button
           className='sign-in'
           onClick={() => signIn()}>
