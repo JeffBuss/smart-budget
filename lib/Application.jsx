@@ -35,7 +35,7 @@ export default class Application extends React.Component {
 
   componentDidMount() {
     reference.limitToLast(100).on('value', (snapshot) => {
-    const content = snapshot.val() || {}
+    const content = snapshot.val() || {};
     this.setState({
       content: map(content, (val, key) => extend(val, { key }))
       })
