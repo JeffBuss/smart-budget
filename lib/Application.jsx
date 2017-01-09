@@ -77,7 +77,7 @@ export default class Application extends React.Component {
     this.setState({ funds: funds}, () => {
       const { funds } = this.state
       this.setState({funds: '', currentFunds: funds}, () => {
-     return this.reduceAssets()
+        return this.reduceAssets()
       })
     })
   }
@@ -128,7 +128,7 @@ export default class Application extends React.Component {
           submitFundsDisabled={this.submitFundsDisabled()}
         />
           <ul>
-            <li className='funds'>${this.reduceAssets()}</li>
+            <li className='funds'>All My Scratch: ${this.reduceAssets()}</li>
           </ul>
         <Transactions
           date={date}
