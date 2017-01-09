@@ -9,6 +9,7 @@ import SubmitButton from './components/SubmitButton';
 import FlowSchedule from './components/FlowSchedule';
 import MonthFinder from './components/MonthFinder';
 import SubmitFunds from './components/SubmitFunds';
+import Quote from './components/Quotes.jsx'
 
 
 export default class Application extends React.Component {
@@ -22,6 +23,7 @@ export default class Application extends React.Component {
       month: '',
       content: [],
       funds: '',
+      recurring: false,
     };
 
     this.handleThiefChange = this.handleThiefChange.bind(this)
@@ -31,6 +33,7 @@ export default class Application extends React.Component {
     // this.handleDelete = this.handleDelete.bind(this)
     this.handleFunds = this.handleFunds.bind(this)
     this.submitFunds = this.submitFunds.bind(this)
+    this.handleRecurring = this.handleRecurring.bind(this)
   }
 
   componentDidMount() {
@@ -62,6 +65,10 @@ export default class Application extends React.Component {
 
   handleFunds(e) {
     this.setState({funds: e.target.value})
+  }
+
+  handleRecurring() {
+    this.setState({ recurring: !this.state.checked });
   }
 
   submitFunds() {
@@ -105,7 +112,7 @@ export default class Application extends React.Component {
   }
 
   render() {
-    const { user, date, amount, whom, content, funds } = this.state;
+    const { user, date, amount, whom, content, funds, recurring } = this.state;
     return (
       <div>
         <LogInOut
@@ -124,9 +131,11 @@ export default class Application extends React.Component {
           date={date}
           whom={whom}
           amount={amount}
+          recurring={recurring}
           handleThiefChange={this.handleThiefChange}
           handleAmountChange={this.handleAmountChange}
           handleDateChange={this.handleDateChange}
+          handleRecurring={this.handleRecurring}
         />
         <SubmitButton
           handleTransactionOnclick={this.handleTransactionOnclick}
