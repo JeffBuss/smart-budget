@@ -19,18 +19,16 @@ export default class FlowSchedule extends React.Component {
     const { content, handleDelete } = this.props
     return (
       <div>
-        {content.map((content, i) => {
+        {/* {content.map((content, i) => {
           return (
             <article key={i}>
               <p className='flow-schedule-name'>{content.whom}</p>
               <p className='flow-schedule-amount'>${content.amount}</p>
               <p className='flow-schedule-date'>{content.date}</p>
-              <button
-                onClick={ () => handleDelete(content.key) }
-              >Delete</button>
             </article>
           )
-        })}
+        })} */}
+        <p>I'm useless</p>
       </div>
     )
   }
