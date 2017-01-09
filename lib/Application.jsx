@@ -6,7 +6,6 @@ import { pick, map, extend } from 'lodash';
 import { LogInOut } from './components/LogInOut';
 import Transactions from './components/Transactions';
 import SubmitButton from './components/SubmitButton';
-import FlowSchedule from './components/FlowSchedule';
 import MonthFinder from './components/MonthFinder';
 import SubmitFunds from './components/SubmitFunds';
 import Quote from './components/Quotes.jsx';
@@ -156,6 +155,7 @@ export default class Application extends React.Component {
     const { user, date, amount, whom, content, funds, recurring } = this.state;
     return (
       <div>
+        <h1 className="title">TrapperKeeper</h1>
         <LogInOut
           user={user}
         />
