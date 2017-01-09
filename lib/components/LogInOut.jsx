@@ -4,7 +4,7 @@ import { signIn, signOut } from '../firebase';
 export const LogInOut = ({ user }) => {
   if (user) {
     return (
-      <div>
+      <div className='logged-in'>
         <p
           className='user-greeting'>
           Logged in as {user.displayName} ({user.email})

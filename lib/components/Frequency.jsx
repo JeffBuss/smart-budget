@@ -8,34 +8,44 @@ export default class Frequency extends React.Component {
     return (
       <div>
         <h1>Frequency</h1>
-        <input
-          type='radio'
-          name='frequency radio'
-          placeholder='Daily'
-          value=''
-        />
-        <p>Daily</p>
-        <input
-          type='radio'
-          name='frequency radio'
-          placeholder='Weekly'
-          value=''
-        />
-        <p>Weekly</p>
-        <input
-          type='radio'
-          name='frequency radio'
-          placeholder='Monthly'
-          value=''
-        />
-        <p>Monthly</p>
-        <input
-          type='radio'
-          name='frequency radio'
-          placeholder='Annually'
-          value=''
-        />
-        <p>Annually</p>
+        <div className='frequency-field'>
+          <div className='frequency-radio'>
+            <input
+              type='radio'
+              name='frequency radio'
+              placeholder='Daily'
+              value=''
+            />
+            <p>Daily</p>
+          </div>
+          <div className='frequency-radio'>
+            <input
+              type='radio'
+              name='frequency radio'
+              placeholder='Weekly'
+              value=''
+            />
+            <p>Weekly</p>
+          </div>
+          <div className='frequency-radio'>
+            <input
+              type='radio'
+              name='frequency radio'
+              placeholder='Monthly'
+              value=''
+            />
+            <p>Monthly</p>
+          </div>
+          <div className='frequency-radio'>
+            <input
+              type='radio'
+              name='frequency radio'
+              placeholder='Annually'
+              value=''
+            />
+            <p>Annually</p>
+          </div>
+        </div>
       </div>
     )
   }

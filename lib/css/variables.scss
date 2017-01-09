@@ -1,0 +1,22 @@
+$sansFontStyle: 'Open Sans', sans-serif;
+$serifFontStyle: 'Lora', serif;
+$bodyBGColor: #fafafa;
+
+@mixin buttonStyles {
+  &:hover {
+        cursor: pointer;
+        background-color: grey;
+    }
+  margin: 1vw;
+  width: 23vw;
+  height: 5vh;
+  border-radius: 5px;
+  border-style: none;
+}
+
+@mixin inputStyles {
+  margin: 1vw;
+  width: 50%;
+  height: 5vh;
+  border-radius: 5px;
+}
