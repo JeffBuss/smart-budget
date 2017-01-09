@@ -66,7 +66,7 @@ export default class Application extends React.Component {
 
   submitFunds() {
     const { funds } = this.state;
-    reference.push({ funds })
+    // reference.push({ funds })
     this.setState({ funds: funds}, () => {
       const { funds } = this.state
       this.setState({funds: '', currentFunds: funds})
