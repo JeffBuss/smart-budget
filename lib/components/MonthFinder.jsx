@@ -68,6 +68,7 @@ export default class MonthFinder extends React.Component {
   render() {
     return (
       <div>
+        <h2>Monthly Transactions:</h2>
         <nav className='month-buttons'>
           <button onClick={this.handleMonthFilter} id={1}>January</button>
           <button onClick={this.handleMonthFilter} id={2}>February</button>
