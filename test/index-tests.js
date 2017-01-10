@@ -11,6 +11,7 @@ import Transactions from '../lib/components/Transactions';
 import MonthFinder from '../lib/components/MonthFinder';
 import SubmitButton from '../lib/components/SubmitButton';
 import SubmitFunds from '../lib/components/SubmitFunds';
+const sinon=require('sinon')
 
 describe("Application", () => {
 
@@ -148,3 +149,15 @@ describe('SubmitFunds', () => {
     expect(wrapper.find('.submit-funds')).to.be.length(1);
   });
 });
+
+describe('Feature Test | AddNewFunds', () => {
+  it('submits a new fund', () => {
+    const buttonClick = sinon.spy()
+    const wrapper = shallow(
+      <SubmitFunds onClick={buttonClick} />)
+    const wrapper2 = shallow(
+      <Application />)
+    wrapper.find('.submit-funds').simulate('click')
+    expect(wrapper2.state('funds')).to.eq('')
+  })
+})
