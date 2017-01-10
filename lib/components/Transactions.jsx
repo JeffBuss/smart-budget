@@ -15,6 +15,7 @@ export default class Transactions extends React.Component {
             <input
               className='whom-input transactions'
               name='whom'
+              aria-label='transaction amount input'
               type='text'
               placeholder='The MF Thief'
               value={whom}
@@ -23,6 +24,7 @@ export default class Transactions extends React.Component {
             <input
               className='amount-input transactions'
               name='amount'
+              aria-label='transaction amount input'
               type='number'
               placeholder='Amount'
               value={amount}
@@ -30,7 +32,7 @@ export default class Transactions extends React.Component {
             />
             <input
               className='date-input transactions'
-              name='date'
+              aria-label='transaction date input'
               type='date'
               placeholder='Date'
               value={date}
@@ -40,6 +42,7 @@ export default class Transactions extends React.Component {
               <p>Pay The Bitches More Than Once?</p>
               <input
                 className='recurring-input'
+                aria-label='recurring input radio button'
                 type='checkbox'
                 placeholder='Recurring?'
                 value=''

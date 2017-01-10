@@ -12,10 +12,12 @@ export default class SubmitFunds extends React.Component {
         <input className='input-field funds-input'
           value={funds}
           type='number'
+          aria-label='credit input field'
           onChange={handleFunds}
         />
         <button
           className='submit-funds'
+          aria-label='submit button for credit input field'
           disabled={submitFundsDisabled}
           onClick={submitFunds}>Submit Funds
         </button>
