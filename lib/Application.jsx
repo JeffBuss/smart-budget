@@ -162,10 +162,10 @@ export default class Application extends React.Component {
     const { user, date, amount, whom, content, funds, recurring } = this.state;
     return (
       <div>
-        <h1 className="title">Trapper Keeper</h1>
         <LogInOut
           user={user}
         />
+        <h1 className="title">Trapper Keeper</h1>
         <SubmitFunds
           funds={funds}
           handleFunds={this.handleFunds}

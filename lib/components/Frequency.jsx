@@ -6,8 +6,8 @@ export default class Frequency extends React.Component {
 
   render() {
     return (
-      <div>
-        <h1>How Often I Pay The Bitches:</h1>
+      <div className='frequency'>
+        <h3>How Regular?!?</h3>
         <div className='frequency-field'>
           <div className='frequency-radio'>
             <input

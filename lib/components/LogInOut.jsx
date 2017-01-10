@@ -5,7 +5,7 @@ import Quote from './Quotes';
 export const LogInOut = ({ user }) => {
   if (user) {
     return (
-      <div className='logged-in'>
+      <div className='logged-in login'>
         <p
           className='user-greeting'>
           Logged in as {user.displayName} ({user.email})
@@ -19,8 +19,8 @@ export const LogInOut = ({ user }) => {
     );
   } else {
     return (
-      <div>
-        <p>{ Quote() }</p>
+      <div className='logged-out login'>
+        <p className='user-greeting'>{ Quote() }</p>
         <button
           className='sign-in'
           onClick={() => signIn()}>
@@ -30,3 +30,5 @@ export const LogInOut = ({ user }) => {
     );
   }
 };
+
+// module.exports = LogInOut;
