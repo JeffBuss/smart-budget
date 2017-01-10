@@ -2,7 +2,7 @@ import React from 'react';
 
 import { shallow, mount, render } from 'enzyme';
 import { assert, expect } from 'chai';
-import sinon from 'sinon';
+import { spy } from 'sinon';
 
 import Application from '../lib/Application';
 import Frequency from '../lib/components/Frequency';
@@ -136,7 +136,7 @@ describe('Unit Test | Transactions', () => {
 
 describe('Feature Test | AddNewTransaction', () => {
   it('submits a new fund', () => {
-    const buttonClick = sinon.spy();
+    const buttonClick = spy();
     const wrapper = shallow(
       <SubmitButton onClick={buttonClick} />);
     const wrapper2 = shallow(
@@ -189,14 +189,14 @@ describe('Feature Test | AddNewTransaction', () => {
 //   });
 //
 //   it('renders xml elements', () => {
-//     sinon.spy(Application.prototype, 'render');
+//     spy(Application.prototype, 'render');
 //     const wrapper = mount(<Application />);
 //     assert.equal(Application.prototype.render.calledOnce, true);
 //   });
 //
 //   describe('Feature Test | AddNewFunds', () => {
 //     it('submits a new fund', () => {
-//       const buttonClick = sinon.spy();
+//       const buttonClick = spy();
 //       const wrapper = shallow(
 //         <SubmitFunds onClick={buttonClick} />);
 //       const wrapper2 = shallow(
