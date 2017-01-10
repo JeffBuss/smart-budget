@@ -3,7 +3,7 @@
 body {
   font-family: $sansFontStyle;
   background-color: $bodyBGColor;
-  width: 75%;
+  width: 80%;
   text-align: center;
   margin: auto;
 }
@@ -17,13 +17,19 @@ ul {
   font-size: 30px;
 }
 
-.funds {
-  font-family: $serifFontStyle;
-  text-align:center;
-}
 .title {
   font-size: 4em;
   text-align: center;
+}
+
+.funds-field {
+  display: inline-block;
+  margin: auto;
+  width: 80%;
+}
+
+.funds-input {
+  @include inputStyles;
 }
 
 .transaction-field {
@@ -50,5 +56,7 @@ ul {
 }
 
 .submit-button {
-  width: 73vw;
+  width: 23vw;
+  height: 7.5vw;
+  font-size: 2em;
 }

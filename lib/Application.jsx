@@ -30,10 +30,10 @@ export default class Application extends React.Component {
     this.handleAmountChange = this.handleAmountChange.bind(this);
     this.handleDateChange = this.handleDateChange.bind(this);
     this.handleTransactionOnclick = this.handleTransactionOnclick.bind(this);
-    // this.handleDelete = this.handleDelete.bind(this)
     this.handleFunds = this.handleFunds.bind(this);
     this.submitFunds = this.submitFunds.bind(this);
     this.handleRecurring = this.handleRecurring.bind(this);
+    this.updateBalance = this.updateBalance.bind(this);
   }
 
   componentDidMount() {
@@ -163,10 +163,8 @@ export default class Application extends React.Component {
           handleFunds={this.handleFunds}
           submitFunds={this.submitFunds}
           submitFundsDisabled={this.submitFundsDisabled()}
+          updateBalance={this.updateBalance}
         />
-          <ul>
-            <li className='funds'>All My Scratch: ${this.updateBalance()}</li>
-          </ul>
         <Transactions
           date={date}
           whom={whom}
@@ -184,7 +182,6 @@ export default class Application extends React.Component {
         <MonthFinder
           content={content}
           deleteContent={this.deleteContent.bind(this)}
-          // handleDelete={this.handleDelete}
         />
       </div>
     );
