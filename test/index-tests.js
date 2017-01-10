@@ -148,6 +148,45 @@ describe('SubmitFunds', () => {
   it('should render a submit funds button', () => {
     expect(wrapper.find('.submit-funds')).to.be.length(1);
   });
+    it('renders xml elements', () => {
+    sinon.spy(Application.prototype, 'render')
+    const wrapper = mount(<Application />)
+    assert.equal(Application.prototype.render.calledOnce, true)
+  })
+
+  describe('Unit Test | DeleteButton', () => {
+  it('can mount with no properties', () => {
+  const wrapper = shallow(<MonthFinder />)
+  })
+  it('should have a button with 1 prop', function(){
+    const wrapper = render(<deleteContent />)
+    assert.equal(wrapper.find('.clearBtn').length, 0)
+  })
+  it('should have the button text rendered onto the page', function(){
+    const wrapper = render(<deleteContent/>)
+    expect(wrapper.text()).to.contain('')
+  })
+})
+
+describe('Unit Test | MonthFinder', () => {
+  it('can mount with no properties', () => {
+  const wrapper = shallow(<MonthFinder />)
+  })
+  it('should have the button text rendered onto the page', function(){
+    const wrapper = render(<MonthFinder/>)
+    expect(wrapper.text()).to.contain('')
+  })
+})
+
+describe('Unit Test | Transactions', () => {
+  it('can mount with no properties', () => {
+  const wrapper = shallow(<Transactions />)
+  })
+  it('should have the button text rendered onto the page', function(){
+    const wrapper = render(<Transactions/>)
+    expect(wrapper.text()).to.contain('')
+  })
+})
 });
 
 describe('Feature Test | AddNewFunds', () => {
@@ -159,5 +198,17 @@ describe('Feature Test | AddNewFunds', () => {
       <Application />)
     wrapper.find('.submit-funds').simulate('click')
     expect(wrapper2.state('funds')).to.eq('')
+  })
+})
+
+describe('Feature Test | AddNewTransaction', () => {
+  it('submits a new fund', () => {
+    const buttonClick = sinon.spy()
+    const wrapper = shallow(
+      <SubmitButton onClick={buttonClick} />)
+    const wrapper2 = shallow(
+      <Application />)
+    wrapper.find('.submit-button').simulate('click')
+    expect(wrapper2.state('amount')).to.eq('')
   })
 })
