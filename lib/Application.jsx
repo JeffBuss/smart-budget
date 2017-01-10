@@ -35,21 +35,19 @@ export default class Application extends React.Component {
   }
 
   componentDidMount() {
-    firebase.database().ref('content').limitToLast(100)
-    .on('value', (snapshot) => {
-      const content = snapshot.val() || {};
-      this.setState({
-        content: map(content, (val, key) => extend(val, { key })),
-      });
-    });
-    firebase.database().ref('funds').limitToLast(100)
-    .on('value', (snapshot) => {
-      const content = snapshot.val() || {};
-      this.setState({
-        bankAccount: map(content, (val, key) => extend(val, { key })),
-      });
-    });
+    this.getDataFromFirebase('content', 'content');
+    this.getDataFromFirebase('funds', 'bankAccount');
     firebase.auth().onAuthStateChanged(user => this.setState({ user }));
+  }
+
+  getDataFromFirebase(fbArray, state) {
+    firebase.database().ref(fbArray).limitToLast(100)
+    .on('value', (snapshot) => {
+      const array = snapshot.val() || {};
+      this.setState({
+        [state]: map(array, (val, key) => extend(val, { key })),
+      });
+    });
   }
 
   handleThiefChange(e) {
@@ -134,6 +132,12 @@ export default class Application extends React.Component {
   }
 
   handleTransactionOnclick() {
+    this.pushObjToFirebase();
+    this.setStateToEmpty();
+    this.updateBalance();
+  }
+
+  pushObjToFirebase() {
     const { whom, amount, date, month } = this.state;
     firebase.database().ref('content').push({
       whom,
@@ -141,12 +145,15 @@ export default class Application extends React.Component {
       date,
       month,
     });
+  }
+
+  setStateToEmpty() {
     this.setState({
       whom: '',
       amount: '',
       date: '',
+      month: '',
     });
-    this.updateBalance();
   }
 
   render() {
