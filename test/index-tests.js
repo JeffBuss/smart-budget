@@ -7,12 +7,11 @@ const sinon = require('sinon')
 import Application from '../lib/Application';
 import Frequency from '../lib/components/Frequency';
 // import LogInOut from '../lib/components/LogInOut';
-const 
 import Quotes from '../lib/components/Quotes';
 import Transactions from '../lib/components/Transactions';
 import MonthFinder from '../lib/components/MonthFinder';
 import SubmitButton from '../lib/components/SubmitButton';
-import SubmitFunds from '../lib/components/SubmitFunds';
+// import SubmitFunds from '../lib/components/SubmitFunds';
 
 describe("Application", () => {
 
@@ -131,85 +130,90 @@ describe('SubmitButton', () => {
   });
 });
 
-describe('SubmitFunds', () => {
-  const wrapper = shallow(<SubmitFunds />);
-
-  it('should render as a <div>', () => {
-    assert.equal(wrapper.type(), 'div');
+// describe('SubmitFunds', () => {
+//   const wrapper = shallow(<SubmitFunds />);
+//
+//   it('should render as a <div>', () => {
+//     assert.equal(wrapper.type(), 'div');
+//   });
+//
+//   it('should have a My Scrilla h1', () => {
+//     expect(wrapper.find('h1')).to.be.length(1);
+//   });
+//
+//   it('should render a transaction input field', () => {
+//     expect(wrapper.find('.transactions')).to.be.length(1);
+//   });
+//
+//   it('should render a submit funds button', () => {
+//     expect(wrapper.find('.submit-funds')).to.be.length(1);
+//   });
+//
+//   it('renders xml elements', () => {
+//     sinon.spy(Application.prototype, 'render');
+//     const wrapper = mount(<Application />);
+//     assert.equal(Application.prototype.render.calledOnce, true);
+//   });
+//
+  describe('Feature Test | AddNewFunds', () => {
+    it('submits a new fund', () => {
+      const buttonClick = sinon.spy();
+      const wrapper = shallow(
+        <SubmitFunds onClick={buttonClick} />);
+      const wrapper2 = shallow(
+        <Application />);
+      wrapper.find('.submit-funds').simulate('click');
+      expect(wrapper2.state('funds')).to.eq('');
+    });
   });
+// });
 
-  it('should have a My Scrilla h1', () => {
-    expect(wrapper.find('h1')).to.be.length(1);
-  });
-
-  it('should render a transaction input field', () => {
-    expect(wrapper.find('.transactions')).to.be.length(1);
-  });
-
-  it('should render a submit funds button', () => {
-    expect(wrapper.find('.submit-funds')).to.be.length(1);
-  });
-    it('renders xml elements', () => {
-    sinon.spy(Application.prototype, 'render')
-    const wrapper = mount(<Application />)
-    assert.equal(Application.prototype.render.calledOnce, true)
-  })
-
-  describe('Unit Test | DeleteButton', () => {
+describe('Unit Test | DeleteButton', () => {
   it('can mount with no properties', () => {
-  const wrapper = shallow(<MonthFinder />)
-  })
-  it('should have a button with 1 prop', function(){
-    const wrapper = render(<deleteContent />)
-    assert.equal(wrapper.find('.clearBtn').length, 0)
-  })
-  it('should have the button text rendered onto the page', function(){
-    const wrapper = render(<deleteContent/>)
-    expect(wrapper.text()).to.contain('')
-  })
-})
+    const wrapper = shallow(<MonthFinder />);
+  });
+
+  it('should have a button with 1 prop', () => {
+    const wrapper = render(<deleteContent />);
+    assert.equal(wrapper.find('.clearBtn').length, 0);
+  });
+
+  it('should have the button text rendered onto the page', () => {
+    const wrapper = render(<deleteContent/>);
+    expect(wrapper.text()).to.contain('');
+  });
+});
 
 describe('Unit Test | MonthFinder', () => {
   it('can mount with no properties', () => {
-  const wrapper = shallow(<MonthFinder />)
-  })
-  it('should have the button text rendered onto the page', function(){
-    const wrapper = render(<MonthFinder/>)
-    expect(wrapper.text()).to.contain('')
-  })
-})
+    const wrapper = shallow(<MonthFinder />);
+  });
+
+  it('should have the button text rendered onto the page', () => {
+    const wrapper = render(<MonthFinder/>);
+    expect(wrapper.text()).to.contain('');
+  });
+});
 
 describe('Unit Test | Transactions', () => {
   it('can mount with no properties', () => {
-  const wrapper = shallow(<Transactions />)
-  })
-  it('should have the button text rendered onto the page', function(){
-    const wrapper = render(<Transactions/>)
-    expect(wrapper.text()).to.contain('')
-  })
-})
-});
+  const wrapper = shallow(<Transactions />);
+  });
 
-describe('Feature Test | AddNewFunds', () => {
-  it('submits a new fund', () => {
-    const buttonClick = sinon.spy()
-    const wrapper = shallow(
-      <SubmitFunds onClick={buttonClick} />)
-    const wrapper2 = shallow(
-      <Application />)
-    wrapper.find('.submit-funds').simulate('click')
-    expect(wrapper2.state('funds')).to.eq('')
-  })
-})
+  it('should have the button text rendered onto the page', () => {
+    const wrapper = render(<Transactions/>);
+    expect(wrapper.text()).to.contain('');
+  });
+});
 
 describe('Feature Test | AddNewTransaction', () => {
   it('submits a new fund', () => {
-    const buttonClick = sinon.spy()
+    const buttonClick = sinon.spy();
     const wrapper = shallow(
-      <SubmitButton onClick={buttonClick} />)
+      <SubmitButton onClick={buttonClick} />);
     const wrapper2 = shallow(
-      <Application />)
-    wrapper.find('.submit-button').simulate('click')
-    expect(wrapper2.state('amount')).to.eq('')
-  })
-})
+      <Application />);
+    wrapper.find('.submit-button').simulate('click');
+    expect(wrapper2.state('amount')).to.eq('');
+  });
+});
