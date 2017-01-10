@@ -5,6 +5,7 @@ export default class MonthFinder extends React.Component {
     super();
     this.state = {
       neededMonths: [],
+      month: '',
     };
 
     this.handleMonthFilter = this.handleMonthFilter.bind(this);
@@ -47,6 +48,7 @@ export default class MonthFinder extends React.Component {
 
   handleMonthFilter(e) {
     this.filterByMonth(e.target.id);
+    this.setState({ month: e.target.innerText });
   }
 
   render() {
@@ -66,7 +68,7 @@ export default class MonthFinder extends React.Component {
           <button onClick={this.handleMonthFilter} id={11}>November</button>
           <button onClick={this.handleMonthFilter} id={12}>December</button>
         </nav>
-        <h2>All The Flow I Owe: $ {this.displayMonthlyAmount()}</h2>
+        { this.state.month !== '' ? <h2>All The Flow I Owe in {this.state.month}: ${this.displayMonthlyAmount()}</h2> : null }
         <ul>{this.displayMonth()}</ul>
       </div>
     );
