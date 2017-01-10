@@ -38,7 +38,10 @@ export default class Application extends React.Component {
   componentDidMount() {
     this.getDataFromFirebase('content', 'content');
     this.getDataFromFirebase('funds', 'bankAccount');
-    firebase.auth().onAuthStateChanged(user => this.setState({ user }));
+    firebase.auth().onAuthStateChanged(user => this.setState({ user }, () => {
+      this.getDataFromFirebase('content', 'content');
+      this.getDataFromFirebase('funds', 'bankAccount');
+    }));
   }
 
   getDataFromFirebase(fbArray, state) {
