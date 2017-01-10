@@ -6,7 +6,6 @@ import { pick, map, extend } from 'lodash';
 import { LogInOut } from './components/LogInOut';
 import Transactions from './components/Transactions';
 import SubmitButton from './components/SubmitButton';
-import FlowSchedule from './components/FlowSchedule';
 import MonthFinder from './components/MonthFinder';
 import SubmitFunds from './components/SubmitFunds';
 import Quote from './components/Quotes.jsx';
