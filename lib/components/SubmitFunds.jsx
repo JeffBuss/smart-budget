@@ -12,6 +12,7 @@ export default class SubmitFunds extends React.Component {
         <input
           className='input-field funds-input'
           value={funds}
+          placeholder='How much to throw in the shoebox'
           type='number'
           aria-label='credit input field'
           onChange={handleFunds}
@@ -20,7 +21,7 @@ export default class SubmitFunds extends React.Component {
           className='submit-funds'
           aria-label='submit button for credit input field'
           disabled={submitFundsDisabled}
-          onClick={submitFunds}>Submit Funds
+          onClick={submitFunds}>Add Funds
         </button>
           <p className='funds'>All My Scratch: ${updateBalance().toLocaleString()}</p>
       </div>

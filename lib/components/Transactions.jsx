@@ -17,7 +17,7 @@ export default class Transactions extends React.Component {
               name='whom'
               aria-label='transaction amount input'
               type='text'
-              placeholder='The MF Thief'
+              placeholder='Name of the MF Thief'
               value={whom}
               onChange={handleThiefChange}
             />
@@ -26,7 +26,7 @@ export default class Transactions extends React.Component {
               name='amount'
               aria-label='transaction amount input'
               type='number'
-              placeholder='Amount'
+              placeholder='How much?'
               value={amount}
               onChange={handleAmountChange}
             />
