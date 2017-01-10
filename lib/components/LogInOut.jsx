@@ -30,5 +30,3 @@ export const LogInOut = ({ user }) => {
     );
   }
 };
-
-// module.exports = LogInOut;
