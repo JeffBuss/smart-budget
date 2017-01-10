@@ -32,6 +32,7 @@ export default class Application extends React.Component {
     this.handleFunds = this.handleFunds.bind(this);
     this.submitFunds = this.submitFunds.bind(this);
     this.handleRecurring = this.handleRecurring.bind(this);
+    this.updateBalance = this.updateBalance.bind(this);
   }
 
   componentDidMount() {
@@ -163,7 +164,7 @@ export default class Application extends React.Component {
     const { user, date, amount, whom, content, funds, recurring } = this.state;
     return (
       <div>
-        <h1 className="title">TrapperKeeper</h1>
+        <h1 className="title">Trapper Keeper</h1>
         <LogInOut
           user={user}
         />
@@ -172,10 +173,8 @@ export default class Application extends React.Component {
           handleFunds={this.handleFunds}
           submitFunds={this.submitFunds}
           submitFundsDisabled={this.submitFundsDisabled()}
+          updateBalance={this.updateBalance}
         />
-          <ul>
-            <li className='funds'>All My Scratch: ${this.updateBalance().toLocaleString()}</li>
-          </ul>
         <Transactions
           date={date}
           whom={whom}

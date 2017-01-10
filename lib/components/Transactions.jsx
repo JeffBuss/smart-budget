@@ -6,7 +6,7 @@ import Frequency from './Frequency';
 export default class Transactions extends React.Component {
 
   render() {
-    const { whom, amount, date, recurring, handleThiefChange, handleAmountChange, handleDateChange, handleRecurring } = this.props
+    const { whom, amount, date, recurring, handleThiefChange, handleAmountChange, handleDateChange, handleRecurring } = this.props;
     return (
       <div>
         <div className='input-field'>
@@ -53,6 +53,6 @@ export default class Transactions extends React.Component {
           { recurring ? <Frequency /> : null }
         </div>
       </div>
-    )
+    );
   }
 }
