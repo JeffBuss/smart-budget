@@ -12,6 +12,7 @@ export default class Frequency extends React.Component {
           <div className='frequency-radio'>
             <input
               type='radio'
+              aria-label='daily frequency'
               name='frequency radio'
               placeholder='Daily'
               value=''
@@ -21,6 +22,7 @@ export default class Frequency extends React.Component {
           <div className='frequency-radio'>
             <input
               type='radio'
+              aria-label='weekly frequency'
               name='frequency radio'
               placeholder='Weekly'
               value=''
@@ -30,6 +32,7 @@ export default class Frequency extends React.Component {
           <div className='frequency-radio'>
             <input
               type='radio'
+              aria-label='monthly frequency'
               name='frequency radio'
               placeholder='Monthly'
               value=''
@@ -39,6 +42,7 @@ export default class Frequency extends React.Component {
           <div className='frequency-radio'>
             <input
               type='radio'
+              aria-label='annually frequency'
               name='frequency radio'
               placeholder='Annually'
               value=''
