@@ -171,7 +171,7 @@ export default class Application extends React.Component {
           submitFundsDisabled={this.submitFundsDisabled()}
         />
           <ul>
-            <li className='funds'>All My Scratch: ${this.updateBalance()}</li>
+            <li className='funds'>All My Scratch: ${this.updateBalance().toLocaleString()}</li>
           </ul>
         <Transactions
           date={date}
