@@ -3,7 +3,7 @@ import { render } from 'react-dom';
 import firebase from './firebase';
 import moment from 'moment';
 import { pick, map, extend } from 'lodash';
-import { LogInOut } from './components/LogInOut';
+import LogInOut from './components/LogInOut';
 import Transactions from './components/Transactions';
 import SubmitButton from './components/SubmitButton';
 import MonthFinder from './components/MonthFinder';

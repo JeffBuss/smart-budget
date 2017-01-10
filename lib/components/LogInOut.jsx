@@ -2,7 +2,7 @@ import React from 'react';
 import { signIn, signOut } from '../firebase';
 import Quote from './Quotes';
 
-export const LogInOut = ({ user }) => {
+const LogInOut = ({ user }) => {
   if (user) {
     return (
       <div className='logged-in'>
@@ -31,4 +31,5 @@ export const LogInOut = ({ user }) => {
   }
 };
 
-// module.exports = LogInOut;
+
+export default LogInOut
