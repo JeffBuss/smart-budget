@@ -21,7 +21,7 @@ export default class SubmitFunds extends React.Component {
           disabled={submitFundsDisabled}
           onClick={submitFunds}>Submit Funds
         </button>
-          <p className='funds'>All My Scratch: ${updateBalance().toLocaleString()}</p>
+          {/* <p className='funds'>All My Scratch: ${updateBalance().toLocaleString()}</p> */}
       </div>
     );
   }
