@@ -34,7 +34,7 @@
 /******/ 	__webpack_require__.c = installedModules;
 
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
+/******/ 	__webpack_require__.p = "/public/";
 
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(0);
@@ -8210,7 +8210,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	__webpack_require__(601);
+	__webpack_require__(602);
 
 	(0, _reactDom.render)(_react2.default.createElement(_Application2.default, null), document.getElementById('application'));
 
@@ -29471,23 +29471,29 @@
 
 	var _LogInOut = __webpack_require__(595);
 
-	var _Transactions = __webpack_require__(596);
+	var _Transactions = __webpack_require__(597);
 
 	var _Transactions2 = _interopRequireDefault(_Transactions);
 
-	var _SubmitButton = __webpack_require__(598);
+	var _SubmitButton = __webpack_require__(599);
 
 	var _SubmitButton2 = _interopRequireDefault(_SubmitButton);
-
-	var _FlowSchedule = __webpack_require__(599);
-
-	var _FlowSchedule2 = _interopRequireDefault(_FlowSchedule);
 
 	var _MonthFinder = __webpack_require__(600);
 
 	var _MonthFinder2 = _interopRequireDefault(_MonthFinder);
 
+	var _SubmitFunds = __webpack_require__(601);
+
+	var _SubmitFunds2 = _interopRequireDefault(_SubmitFunds);
+
+	var _Quotes = __webpack_require__(596);
+
+	var _Quotes2 = _interopRequireDefault(_Quotes);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -29509,13 +29515,19 @@
 	      amount: '',
 	      date: '',
 	      month: '',
-	      content: []
+	      content: [],
+	      funds: '',
+	      bankAccount: [],
+	      recurring: false
 	    };
 
 	    _this.handleThiefChange = _this.handleThiefChange.bind(_this);
 	    _this.handleAmountChange = _this.handleAmountChange.bind(_this);
 	    _this.handleDateChange = _this.handleDateChange.bind(_this);
 	    _this.handleTransactionOnclick = _this.handleTransactionOnclick.bind(_this);
+	    _this.handleFunds = _this.handleFunds.bind(_this);
+	    _this.submitFunds = _this.submitFunds.bind(_this);
+	    _this.handleRecurring = _this.handleRecurring.bind(_this);
 	    return _this;
 	  }
 
@@ -29524,16 +29536,22 @@
 	    value: function componentDidMount() {
 	      var _this2 = this;
 
-	      _firebase.reference.limitToLast(100).on('value', function (snapshot) {
-	        var content = snapshot.val() || {};
-	        _this2.setState({
-	          content: (0, _lodash.map)(content, function (val, key) {
-	            return (0, _lodash.extend)(val, { key: key });
-	          })
-	        });
-	      });
+	      this.getDataFromFirebase('content', 'content');
+	      this.getDataFromFirebase('funds', 'bankAccount');
 	      _firebase2.default.auth().onAuthStateChanged(function (user) {
 	        return _this2.setState({ user: user });
+	      });
+	    }
+	  }, {
+	    key: 'getDataFromFirebase',
+	    value: function getDataFromFirebase(fbArray, state) {
+	      var _this3 = this;
+
+	      _firebase2.default.database().ref(fbArray).limitToLast(100).on('value', function (snapshot) {
+	        var array = snapshot.val() || {};
+	        _this3.setState(_defineProperty({}, state, (0, _lodash.map)(array, function (val, key) {
+	          return (0, _lodash.extend)(val, { key: key });
+	        })));
 	      });
 	    }
 	  }, {
@@ -29551,12 +29569,88 @@
 	  }, {
 	    key: 'handleDateChange',
 	    value: function handleDateChange(e) {
-	      var _this3 = this;
+	      var _this4 = this;
 
 	      var date = e.target.value;
 	      this.setState({ date: date }, function () {
-	        _this3.getMonth();
+	        _this4.getMonth();
 	      });
+	    }
+	  }, {
+	    key: 'handleFunds',
+	    value: function handleFunds(e) {
+	      this.setState({ funds: e.target.value });
+	    }
+	  }, {
+	    key: 'handleRecurring',
+	    value: function handleRecurring() {
+	      this.setState({ recurring: !this.state.recurring });
+	    }
+	  }, {
+	    key: 'submitFunds',
+	    value: function submitFunds() {
+	      var _this5 = this;
+
+	      var funds = this.state.funds;
+
+	      _firebase2.default.database().ref('funds').push({ funds: funds });
+	      this.setState({ funds: funds }, function () {
+	        _this5.setState({ funds: '', currentFunds: funds }, function () {
+	          _this5.updateBalance();
+	        });
+	      });
+	    }
+	  }, {
+	    key: 'deleteContent',
+	    value: function deleteContent(transactionId) {
+	      this.removeFromContentState(transactionId);
+	      this.removeFromFB(transactionId);
+	    }
+	  }, {
+	    key: 'removeFromContentState',
+	    value: function removeFromContentState(transactionId) {
+	      var remainingContent = this.state.content.filter(function (transaction) {
+	        return transaction.key !== transactionId;
+	      });
+	      this.setState({ content: remainingContent });
+	    }
+	  }, {
+	    key: 'removeFromFB',
+	    value: function removeFromFB(transactionId) {
+	      _firebase2.default.database().ref('content').child(transactionId).remove();
+	    }
+	  }, {
+	    key: 'updateBalance',
+	    value: function updateBalance() {
+	      var newBalance = this.reduceAssets() - this.reduceLiabilities();
+	      return newBalance;
+	    }
+	  }, {
+	    key: 'reduceAssets',
+	    value: function reduceAssets() {
+	      var assets = this.state.bankAccount.map(function (deposits) {
+	        return +deposits.funds;
+	      });
+	      var balance = assets.reduce(function (a, b) {
+	        return a + b;
+	      }, 0);
+	      return balance;
+	    }
+	  }, {
+	    key: 'reduceLiabilities',
+	    value: function reduceLiabilities() {
+	      var liabilities = this.state.content.map(function (transaction) {
+	        return +transaction.amount;
+	      });
+	      var liabilityBalance = liabilities.reduce(function (a, b) {
+	        return a + b;
+	      }, 0);
+	      return liabilityBalance;
+	    }
+	  }, {
+	    key: 'submitFundsDisabled',
+	    value: function submitFundsDisabled() {
+	      return !this.state.funds;
 	    }
 	  }, {
 	    key: 'submitDisabled',
@@ -29571,22 +29665,34 @@
 	  }, {
 	    key: 'handleTransactionOnclick',
 	    value: function handleTransactionOnclick() {
+	      this.pushObjToFirebase();
+	      this.setStateToEmpty();
+	      this.updateBalance();
+	    }
+	  }, {
+	    key: 'pushObjToFirebase',
+	    value: function pushObjToFirebase() {
 	      var _state = this.state,
 	          whom = _state.whom,
 	          amount = _state.amount,
 	          date = _state.date,
 	          month = _state.month;
 
-	      _firebase.reference.push({
+	      _firebase2.default.database().ref('content').push({
 	        whom: whom,
 	        amount: amount,
 	        date: date,
 	        month: month
 	      });
+	    }
+	  }, {
+	    key: 'setStateToEmpty',
+	    value: function setStateToEmpty() {
 	      this.setState({
 	        whom: '',
 	        amount: '',
-	        date: ''
+	        date: '',
+	        month: ''
 	      });
 	    }
 	  }, {
@@ -29597,31 +29703,54 @@
 	          date = _state2.date,
 	          amount = _state2.amount,
 	          whom = _state2.whom,
-	          content = _state2.content;
+	          content = _state2.content,
+	          funds = _state2.funds,
+	          recurring = _state2.recurring;
 
 	      return _react2.default.createElement(
 	        'div',
 	        null,
+	        _react2.default.createElement(
+	          'h1',
+	          { className: 'title' },
+	          'TrapperKeeper'
+	        ),
 	        _react2.default.createElement(_LogInOut.LogInOut, {
 	          user: user
 	        }),
+	        _react2.default.createElement(_SubmitFunds2.default, {
+	          funds: funds,
+	          handleFunds: this.handleFunds,
+	          submitFunds: this.submitFunds,
+	          submitFundsDisabled: this.submitFundsDisabled()
+	        }),
+	        _react2.default.createElement(
+	          'ul',
+	          null,
+	          _react2.default.createElement(
+	            'li',
+	            { className: 'funds' },
+	            'All My Scratch: $',
+	            this.updateBalance().toLocaleString()
+	          )
+	        ),
 	        _react2.default.createElement(_Transactions2.default, {
 	          date: date,
 	          whom: whom,
 	          amount: amount,
+	          recurring: recurring,
 	          handleThiefChange: this.handleThiefChange,
 	          handleAmountChange: this.handleAmountChange,
-	          handleDateChange: this.handleDateChange
+	          handleDateChange: this.handleDateChange,
+	          handleRecurring: this.handleRecurring
 	        }),
 	        _react2.default.createElement(_SubmitButton2.default, {
 	          handleTransactionOnclick: this.handleTransactionOnclick,
 	          submitDisabled: this.submitDisabled()
 	        }),
-	        _react2.default.createElement(_FlowSchedule2.default, {
-	          content: content
-	        }),
 	        _react2.default.createElement(_MonthFinder2.default, {
-	          content: content
+	          content: content,
+	          deleteContent: this.deleteContent.bind(this)
 	        })
 	      );
 	    }
@@ -62361,6 +62490,10 @@
 
 	var _firebase = __webpack_require__(476);
 
+	var _Quotes = __webpack_require__(596);
+
+	var _Quotes2 = _interopRequireDefault(_Quotes);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var LogInOut = exports.LogInOut = function LogInOut(_ref) {
@@ -62369,7 +62502,7 @@
 	  if (user) {
 	    return _react2.default.createElement(
 	      'div',
-	      null,
+	      { className: 'logged-in' },
 	      _react2.default.createElement(
 	        'p',
 	        {
@@ -62395,6 +62528,11 @@
 	      'div',
 	      null,
 	      _react2.default.createElement(
+	        'p',
+	        null,
+	        (0, _Quotes2.default)()
+	      ),
+	      _react2.default.createElement(
 	        'button',
 	        {
 	          className: 'sign-in',
@@ -62407,8 +62545,27 @@
 	  }
 	};
 
+	// module.exports = LogInOut;
+
 /***/ },
 /* 596 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var Quote = function Quote() {
+	  var quotesArray = ['"Floss a little; invest up in a mutual fund." (Busta Rhymes, “Dangerous”)', '"Men lie, women lie, numbers don’t.” (Jay Z, "Reminder")', '"Get your money right, be an international player.” (Dr. Dre, “Get Your Money Right")', '“Control what I hold and of course be the boss of myself, no-one else will bring my wealth.” (Big Daddy Kane, “A Job Ain’t Nothing But Work”)', '“Let’s toast to paid mortgages, lasting marriages.” (Talib Kweli, “Art Imitates Life.")', '“Never loan somebody what you need right back.” (Drake, “All Me”)', '“Invest in your future, don’t dilute your finances, 401k, make sure it’s low risk, then get some real estate, 4.25% thirty-year mortgage.” (Kendrick Lamar, "YOLO")', '"We dont lease we buy the whole car. (Jay Z, Can I Live)"', '"Diversify your millions, you can live off the interest / Make every revenue stream flood, see where it took me." (Xzibit, "Everything")', '"Id be lying if I said I didnt want millions / More than money saved, I wanna save children." (Common, "The 6th Sense")'];
+	  var randomQuote = quotesArray[Math.floor(Math.random() * quotesArray.length)];
+	  return randomQuote;
+	};
+
+	exports.default = Quote;
+
+/***/ },
+/* 597 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -62429,7 +62586,7 @@
 
 	var _firebase2 = _interopRequireDefault(_firebase);
 
-	var _Frequency = __webpack_require__(597);
+	var _Frequency = __webpack_require__(598);
 
 	var _Frequency2 = _interopRequireDefault(_Frequency);
 
@@ -62457,50 +62614,72 @@
 	          whom = _props.whom,
 	          amount = _props.amount,
 	          date = _props.date,
+	          recurring = _props.recurring,
 	          handleThiefChange = _props.handleThiefChange,
 	          handleAmountChange = _props.handleAmountChange,
-	          handleDateChange = _props.handleDateChange;
+	          handleDateChange = _props.handleDateChange,
+	          handleRecurring = _props.handleRecurring;
 
 	      return _react2.default.createElement(
 	        'div',
 	        null,
 	        _react2.default.createElement(
-	          'header',
-	          null,
-	          'Trapper Keeper'
-	        ),
-	        _react2.default.createElement(
-	          'h1',
-	          null,
-	          'Transactions'
-	        ),
-	        _react2.default.createElement('input', {
-	          name: 'whom',
-	          type: 'text',
-	          placeholder: 'The MF Thief',
-	          value: whom,
-	          onChange: handleThiefChange
-	        }),
-	        _react2.default.createElement('input', {
-	          name: 'amount',
-	          type: 'number',
-	          placeholder: 'Amount',
-	          value: amount,
-	          onChange: handleAmountChange
-	        }),
-	        _react2.default.createElement('input', {
-	          name: 'date',
-	          type: 'date',
-	          placeholder: 'Date',
-	          value: date,
-	          onChange: handleDateChange
-	        }),
-	        _react2.default.createElement('input', {
-	          type: 'radio',
-	          placeholder: 'Recurring?',
-	          value: ''
-	        }),
-	        _react2.default.createElement(_Frequency2.default, null)
+	          'div',
+	          { className: 'input-field' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'transaction-field' },
+	            _react2.default.createElement(
+	              'h1',
+	              { className: 'transaction-title' },
+	              'Bitches I Gotta Pay:'
+	            ),
+	            _react2.default.createElement('input', {
+	              className: 'whom-input transactions',
+	              name: 'whom',
+	              'aria-label': 'transaction amount input',
+	              type: 'text',
+	              placeholder: 'The MF Thief',
+	              value: whom,
+	              onChange: handleThiefChange
+	            }),
+	            _react2.default.createElement('input', {
+	              className: 'amount-input transactions',
+	              name: 'amount',
+	              'aria-label': 'transaction amount input',
+	              type: 'number',
+	              placeholder: 'Amount',
+	              value: amount,
+	              onChange: handleAmountChange
+	            }),
+	            _react2.default.createElement('input', {
+	              className: 'date-input transactions',
+	              'aria-label': 'transaction date input',
+	              type: 'date',
+	              placeholder: 'Date',
+	              value: date,
+	              onChange: handleDateChange
+	            }),
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'recurring-radio' },
+	              _react2.default.createElement(
+	                'p',
+	                null,
+	                'Pay The Bitches More Than Once?'
+	              ),
+	              _react2.default.createElement('input', {
+	                className: 'recurring-input',
+	                'aria-label': 'recurring input radio button',
+	                type: 'checkbox',
+	                placeholder: 'Recurring?',
+	                value: '',
+	                onChange: handleRecurring
+	              })
+	            )
+	          ),
+	          recurring ? _react2.default.createElement(_Frequency2.default, null) : null
+	        )
 	      );
 	    }
 	  }]);
@@ -62511,7 +62690,7 @@
 	exports.default = Transactions;
 
 /***/ },
-/* 597 */
+/* 598 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -62558,32 +62737,76 @@
 	        _react2.default.createElement(
 	          'h1',
 	          null,
-	          'Frequency'
+	          'How Often I Pay The Bitches:'
 	        ),
-	        _react2.default.createElement('input', {
-	          type: 'radio',
-	          name: 'frequency radio',
-	          placeholder: 'Daily',
-	          value: ''
-	        }),
-	        _react2.default.createElement('input', {
-	          type: 'radio',
-	          name: 'frequency radio',
-	          placeholder: 'Weekly',
-	          value: ''
-	        }),
-	        _react2.default.createElement('input', {
-	          type: 'radio',
-	          name: 'frequency radio',
-	          placeholder: 'Monthly',
-	          value: ''
-	        }),
-	        _react2.default.createElement('input', {
-	          type: 'radio',
-	          name: 'frequency radio',
-	          placeholder: 'Annually',
-	          value: ''
-	        })
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'frequency-field' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'frequency-radio' },
+	            _react2.default.createElement('input', {
+	              type: 'radio',
+	              'aria-label': 'daily frequency',
+	              name: 'frequency radio',
+	              placeholder: 'Daily',
+	              value: ''
+	            }),
+	            _react2.default.createElement(
+	              'p',
+	              null,
+	              'Daily'
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'frequency-radio' },
+	            _react2.default.createElement('input', {
+	              type: 'radio',
+	              'aria-label': 'weekly frequency',
+	              name: 'frequency radio',
+	              placeholder: 'Weekly',
+	              value: ''
+	            }),
+	            _react2.default.createElement(
+	              'p',
+	              null,
+	              'Weekly'
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'frequency-radio' },
+	            _react2.default.createElement('input', {
+	              type: 'radio',
+	              'aria-label': 'monthly frequency',
+	              name: 'frequency radio',
+	              placeholder: 'Monthly',
+	              value: ''
+	            }),
+	            _react2.default.createElement(
+	              'p',
+	              null,
+	              'Monthly'
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'frequency-radio' },
+	            _react2.default.createElement('input', {
+	              type: 'radio',
+	              'aria-label': 'annually frequency',
+	              name: 'frequency radio',
+	              placeholder: 'Annually',
+	              value: ''
+	            }),
+	            _react2.default.createElement(
+	              'p',
+	              null,
+	              'Annually'
+	            )
+	          )
+	        )
 	      );
 	    }
 	  }]);
@@ -62594,7 +62817,7 @@
 	exports.default = Frequency;
 
 /***/ },
-/* 598 */
+/* 599 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -62646,7 +62869,7 @@
 	          'button',
 	          {
 	            disabled: submitDisabled,
-	            className: 'SubmitBtn',
+	            className: 'submit-button all-buttons',
 	            onClick: handleTransactionOnclick },
 	          'Submit'
 	        )
@@ -62658,98 +62881,6 @@
 	}(_react2.default.Component);
 
 	exports.default = SubmitButton;
-
-/***/ },
-/* 599 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(299);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactDom = __webpack_require__(329);
-
-	var _firebase = __webpack_require__(476);
-
-	var _firebase2 = _interopRequireDefault(_firebase);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var FlowSchedule = function (_React$Component) {
-	  _inherits(FlowSchedule, _React$Component);
-
-	  function FlowSchedule() {
-	    _classCallCheck(this, FlowSchedule);
-
-	    return _possibleConstructorReturn(this, (FlowSchedule.__proto__ || Object.getPrototypeOf(FlowSchedule)).apply(this, arguments));
-	  }
-
-	  _createClass(FlowSchedule, [{
-	    key: 'monthFilter',
-
-
-	    // monthFilter(content, 1)
-
-	    value: function monthFilter(content, selectedMonth) {
-	      content.map(function (transaction, i) {
-	        if (transaction.month === selectedMonth) {
-	          console.log('yo');
-	          // selectedMonth.push(transaction);
-	        }
-	      });
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var content = this.props.content;
-
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        content.map(function (content, i) {
-	          return _react2.default.createElement(
-	            'article',
-	            { key: i },
-	            _react2.default.createElement(
-	              'p',
-	              { className: 'flow-schedule-name' },
-	              content.whom
-	            ),
-	            _react2.default.createElement(
-	              'p',
-	              { className: 'flow-schedule-amount' },
-	              '$',
-	              content.amount
-	            ),
-	            _react2.default.createElement(
-	              'p',
-	              { className: 'flow-schedule-date' },
-	              content.date
-	            )
-	          );
-	        })
-	      );
-	    }
-	  }]);
-
-	  return FlowSchedule;
-	}(_react2.default.Component);
-
-	exports.default = FlowSchedule;
 
 /***/ },
 /* 600 */
@@ -62784,7 +62915,8 @@
 	    var _this = _possibleConstructorReturn(this, (MonthFinder.__proto__ || Object.getPrototypeOf(MonthFinder)).call(this));
 
 	    _this.state = {
-	      neededMonths: []
+	      neededMonths: [],
+	      month: ''
 	    };
 
 	    _this.handleMonthFilter = _this.handleMonthFilter.bind(_this);
@@ -62802,6 +62934,8 @@
 	  }, {
 	    key: 'displayMonth',
 	    value: function displayMonth() {
+	      var _this2 = this;
+
 	      return this.state.neededMonths.map(function (day, i) {
 	        return _react2.default.createElement(
 	          'li',
@@ -62821,14 +62955,58 @@
 	            'h2',
 	            null,
 	            day.date
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            {
+	              onClick: function onClick() {
+	                return _this2.handleDelete(day.key);
+	              }
+	            },
+	            'Delete'
 	          )
 	        );
 	      });
 	    }
 	  }, {
+	    key: 'handleDelete',
+	    value: function handleDelete(transactionId) {
+	      var _this3 = this;
+
+	      var filteredTransByMonth = this.state.neededMonths.filter(function (transaction) {
+	        return transaction.key !== transactionId;
+	      });
+	      this.setState({ neededMonths: filteredTransByMonth }, function () {
+	        _this3.props.deleteContent(transactionId);
+	      });
+	    }
+	  }, {
+	    key: 'displayMonthlyAmount',
+	    value: function displayMonthlyAmount() {
+	      var amounts = this.state.neededMonths.map(function (day) {
+	        return +day.amount;
+	      });
+	      return amounts.reduce(function (a, b) {
+	        return a + b;
+	      }, 0);
+	    }
+	  }, {
 	    key: 'handleMonthFilter',
 	    value: function handleMonthFilter(e) {
 	      this.filterByMonth(e.target.id);
+	      this.setState({ month: e.target.innerText });
+	    }
+	  }, {
+	    key: 'showMonthlyAmt',
+	    value: function showMonthlyAmt() {
+	      return this.state.month !== '' ? _react2.default.createElement(
+	        'h2',
+	        null,
+	        'All The Flow I Owe in ',
+	        this.state.month,
+	        ': $',
+	        this.displayMonthlyAmount().toLocaleString()
+	      ) : null;
 	    }
 	  }, {
 	    key: 'render',
@@ -62837,65 +63015,70 @@
 	        'div',
 	        null,
 	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.handleMonthFilter, id: 1 },
-	          'January'
+	          'nav',
+	          { className: 'month-buttons' },
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.handleMonthFilter, id: 1 },
+	            'January'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.handleMonthFilter, id: 2 },
+	            'February'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.handleMonthFilter, id: 3 },
+	            'March'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.handleMonthFilter, id: 4 },
+	            'April'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.handleMonthFilter, id: 5 },
+	            'May'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.handleMonthFilter, id: 6 },
+	            'June'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.handleMonthFilter, id: 7 },
+	            'July'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.handleMonthFilter, id: 8 },
+	            'August'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.handleMonthFilter, id: 9 },
+	            'September'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.handleMonthFilter, id: 10 },
+	            'October'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.handleMonthFilter, id: 11 },
+	            'November'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.handleMonthFilter, id: 12 },
+	            'December'
+	          )
 	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.handleMonthFilter, id: 2 },
-	          'February'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.handleMonthFilter, id: 3 },
-	          'March'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.handleMonthFilter, id: 4 },
-	          'April'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.handleMonthFilter, id: 5 },
-	          'May'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.handleMonthFilter, id: 6 },
-	          'June'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.handleMonthFilter, id: 7 },
-	          'July'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.handleMonthFilter, id: 8 },
-	          'August'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.handleMonthFilter, id: 9 },
-	          'September'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.handleMonthFilter, id: 10 },
-	          'October'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.handleMonthFilter, id: 11 },
-	          'November'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.handleMonthFilter, id: 12 },
-	          'December'
-	        ),
+	        this.showMonthlyAmt(),
 	        _react2.default.createElement(
 	          'ul',
 	          null,
@@ -62914,20 +63097,100 @@
 /* 601 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(299);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(329);
+
+	var _firebase = __webpack_require__(476);
+
+	var _firebase2 = _interopRequireDefault(_firebase);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var SubmitFunds = function (_React$Component) {
+	  _inherits(SubmitFunds, _React$Component);
+
+	  function SubmitFunds() {
+	    _classCallCheck(this, SubmitFunds);
+
+	    return _possibleConstructorReturn(this, (SubmitFunds.__proto__ || Object.getPrototypeOf(SubmitFunds)).apply(this, arguments));
+	  }
+
+	  _createClass(SubmitFunds, [{
+	    key: 'render',
+	    value: function render() {
+	      var _props = this.props,
+	          handleFunds = _props.handleFunds,
+	          submitFundsDisabled = _props.submitFundsDisabled,
+	          funds = _props.funds,
+	          submitFunds = _props.submitFunds;
+
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          'h1',
+	          null,
+	          'My Scrilla To Put In The Pot:'
+	        ),
+	        _react2.default.createElement('input', { className: 'input-field transactions',
+	          value: funds,
+	          type: 'number',
+	          'aria-label': 'credit input field',
+	          onChange: handleFunds
+	        }),
+	        _react2.default.createElement(
+	          'button',
+	          {
+	            className: 'submit-funds',
+	            'aria-label': 'submit button for credit input field',
+	            disabled: submitFundsDisabled,
+	            onClick: submitFunds },
+	          'Submit Funds'
+	        )
+	      );
+	    }
+	  }]);
+
+	  return SubmitFunds;
+	}(_react2.default.Component);
+
+	exports.default = SubmitFunds;
+
+/***/ },
+/* 602 */
+/***/ function(module, exports, __webpack_require__) {
+
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(602);
+	var content = __webpack_require__(603);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(604)(content, {});
+	var update = __webpack_require__(605)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/sass-loader/index.js!./style.scss", function() {
-				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/sass-loader/index.js!./style.scss");
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./style.scss", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./style.scss");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -62937,21 +63200,21 @@
 	}
 
 /***/ },
-/* 602 */
+/* 603 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(603)();
+	exports = module.exports = __webpack_require__(604)();
 	// imports
 
 
 	// module
-	exports.push([module.id, "\n", ""]);
+	exports.push([module.id, "body {\n  font-family: \"Open Sans\", sans-serif;\n  background-color: #fafafa;\n  width: 75%;\n  text-align: center;\n  margin: auto; }\n\nbutton {\n  margin: 1vw;\n  width: 23vw;\n  height: 5vh;\n  border-radius: 5px;\n  border-style: none; }\n  button:hover {\n    cursor: pointer;\n    background-color: grey; }\n\nul {\n  list-style-type: none;\n  font-size: 30px; }\n\n.funds {\n  font-family: \"Lora\", serif; }\n\n.title {\n  font-size: 5em;\n  text-align: center; }\n\n.transaction-field {\n  margin: auto; }\n\n.transactions {\n  margin: 1vw;\n  width: 50%;\n  height: 5vh;\n  border-radius: 5px; }\n\n.input-field {\n  display: inline-block;\n  margin: auto;\n  width: 80%; }\n\n.frequency-field {\n  display: inline-block; }\n\n.frequency-radio {\n  display: inline-block;\n  margin: 1vw; }\n\n.submit-button {\n  width: 73vw; }\n", ""]);
 
 	// exports
 
 
 /***/ },
-/* 603 */
+/* 604 */
 /***/ function(module, exports) {
 
 	/*
@@ -63007,7 +63270,7 @@
 
 
 /***/ },
-/* 604 */
+/* 605 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
