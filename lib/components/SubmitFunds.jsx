@@ -8,8 +8,9 @@ export default class SubmitFunds extends React.Component {
     const { handleFunds, submitFundsDisabled, funds, submitFunds, updateBalance } = this.props;
     return (
       <div className='funds-field'>
-        <h1>My Scrilla To Put In The Pot:</h1>
-        <input className='input-field funds-input'
+        <h2>My Scrilla To Put In The Pot:</h2>
+        <input
+          className='input-field funds-input'
           value={funds}
           type='number'
           aria-label='credit input field'
@@ -21,7 +22,7 @@ export default class SubmitFunds extends React.Component {
           disabled={submitFundsDisabled}
           onClick={submitFunds}>Submit Funds
         </button>
-          {/* <p className='funds'>All My Scratch: ${updateBalance().toLocaleString()}</p> */}
+          <p className='funds'>All My Scratch: ${updateBalance().toLocaleString()}</p>
       </div>
     );
   }

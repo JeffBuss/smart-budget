@@ -40,8 +40,8 @@ describe('Frequency', () => {
     assert.equal(wrapper.type(), 'div');
   });
 
-  it('should have a Frequency h1 ', () => {
-    expect(wrapper.find('h1')).to.be.length(1);
+  it('should have a Frequency header ', () => {
+    expect(wrapper.find('h3')).to.be.length(1);
   });
 
   it('should render 4 radio inputs', () => {
@@ -60,8 +60,8 @@ describe('Transactions', () => {
     expect(wrapper.find('input')).to.be.length(4);
   });
 
-  it('should have a transactions h1', () => {
-    expect(wrapper.find('h1')).to.be.length(1);
+  it('should have a transactions header', () => {
+    expect(wrapper.find('h2')).to.be.length(1);
   });
 });
 

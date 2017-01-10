@@ -20,12 +20,16 @@ export default class MonthFinder extends React.Component {
   displayMonth() {
     return this.state.neededMonths.map((day, i) => {
       return (
-        <li key={i}>
-          <h2>{day.whom}</h2>
-          <h2>${day.amount}</h2>
-          <h2>{day.date}</h2>
+        <li
+          key={i}
+          className='transaction-box'
+        >
+          <h3 className='whom'>{day.whom}</h3>
+          <h2 className='amount'>${day.amount}</h2>
+          <h2 className='date'>{day.date}</h2>
           <button
             onClick={ () => this.handleDelete(day.key) }
+            className='delete-button'
           >Delete</button>
         </li>
       );
@@ -78,8 +82,8 @@ export default class MonthFinder extends React.Component {
           <button onClick={this.handleMonthFilter} id={11}>November</button>
           <button onClick={this.handleMonthFilter} id={12}>December</button>
         </nav>
-        { this.showMonthlyAmt() }
-        <ul>{this.displayMonth()}</ul>
+        <span className='flow-i-owe'>{ this.showMonthlyAmt() }</span>
+        <ul className='transaction-list'>{this.displayMonth()}</ul>
       </div>
     );
   }
